@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leitura NF-e + Transportadora (Botões)</title>
+  <style>
+    :root{
+      --bg:#f4f6fa;
+      --card:#ffffff;
+      --text:#222;
+      --muted:#6b7280;
+      --primary:#2563eb;
+      --border:#e5e7eb;
+      --ok:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:100%;max-width:680px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.06);padding:22px}
+    h1{margin:0 0 14px 0;font-size:20px;text-align:center}
+    label{display:block;font-weight:600;margin:12px 0 6px}
+    input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);font-size:16px;outline:none}
+    input::placeholder{color:#9ca3af}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .row{display:flex;gap:10px;margin-top:14px}
+    button{appearance:none;border:0;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
+    .primary{background:var(--primary);color:#fff;flex:1}
+    .ghost{background:transparent;border:1px solid var(--border);flex:1}
+    .out{margin-top:18px;background:#f9fafb;border:1px solid var(--border);border-radius:12px;padding:14px;font-family:Consolas,Menlo,monospace}
+    .k{color:#374151}
+    .v{font-weight:700}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+    .chip{border:1px solid var(--border);background:#fff;padding:12px 10px;border-radius:12px;font-weight:700;text-align:center;cursor:pointer}
+    .chip:hover{border-color:#cbd5e1}
+    .chip:focus{outline:3px solid #93c5fd;outline-offset:2px}
+    .chip.selected{background:#eef2ff;border-color:#c7d2fe}
+    .success{margin-top:10px;color:var(--ok);font-weight:700;display:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Concatenação (30º–34º) + Data/Hora</h1>
+
+      <label for="codigo">Cole ou leia o código da NF-e</label>
+      <input id="codigo" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" />
+      <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
+
+      <div class="out" id="resultado" hidden>
+        <div><span class="k">Concatenação 30º–34º:</span> <span class="v" id="concat"></span></div>
+        <div><span class="k">Lido em:</span> <span class="v" id="timestamp"></span></div>
+      </div>
+
+      <div id="transportadorasWrap" hidden>
+        <div class="hint" style="margin-top:10px">Selecione a transportadora clicando no botão:</div>
+        <div class="grid" id="gridTransportadoras">
+          <!-- Botões criados via JS -->
+        </div>
+        <div class="success" id="okMsg">Transportadora selecionada!</div>
+      </div>
+
+      <div class="row">
+        <button class="primary" id="btnLer">Ler</button>
+        <button class="ghost" id="btnLimpar">Limpar</button>
+      </div>
+
+      <div class="hint">Contagem humana: 30º = posição 30 da chave. O app remove caracteres não-numéricos automaticamente.</div>
+    </div>
+  </div>
+
+  <script>
+    const codigo = document.getElementById('codigo');
+    const resultado = document.getElementById('resultado');
+    const concatSpan = document.getElementById('concat');
+    const timestampSpan = document.getElementById('timestamp');
+    const btnLer = document.getElementById('btnLer');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const transportadorasWrap = document.getElementById('transportadorasWrap');
+    const gridTransportadoras = document.getElementById('gridTransportadoras');
+    const okMsg = document.getElementById('okMsg');
+
+    const LISTA = [
+      'SUDOESTE',
+      'RODONAVES',
+      'TNT',
+      'EUCATUR / TRANSGOSS',
+      'SIM / MOBILI / TW',
+      'GAAM'
+    ];
+
+    function somenteDigitos(v){ return (v||'').toString().replace(/\D+/g,''); }
+
+    function construirBotoes(){
+      gridTransportadoras.innerHTML = '';
+      LISTA.forEach((nome, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = nome;
+        b.setAttribute('data-nome', nome);
+        b.addEventListener('click', () => selecionarTransportadora(b));
+        // acessibilidade via teclado
+        b.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            selecionarTransportadora(b);
+          }
+        });
+        gridTransportadoras.appendChild(b);
+      });
+    }
+
+    function selecionarTransportadora(btn){
+      // limpar seleção anterior
+      document.querySelectorAll('.chip.selected').forEach(el=>el.classList.remove('selected'));
+      btn.classList.add('selected');
+      okMsg.style.display = 'block';
+      okMsg.textContent = 'Transportadora selecionada: ' + btn.dataset.nome;
+      setTimeout(()=> okMsg.style.display='none', 1500);
+    }
+
+    function extrair(){
+      const digits = somenteDigitos(codigo.value);
+      if(digits.length < 34){
+        alert('O código precisa ter ao menos 34 dígitos (a chave NF-e costuma ter 44).');
+        resultado.hidden = true;
+        transportadorasWrap.hidden = true;
+        return;
+      }
+      const seq = digits.slice(29,34); // 30º–34º (1-based) => 29..33 (0-based)
+      const agora = new Date();
+      const dataHora = agora.toLocaleString('pt-BR');
+
+      concatSpan.textContent = seq;
+      timestampSpan.textContent = dataHora;
+      resultado.hidden = false;
+
+      // Exibir botões de transportadora
+      construirBotoes();
+      transportadorasWrap.hidden = false;
+      // Foco no primeiro botão para agilizar após o bip
+      const firstBtn = gridTransportadoras.querySelector('.chip');
+      if(firstBtn) firstBtn.focus();
+      return seq;
+    }
+
+    btnLer.addEventListener('click', extrair);
+
+    codigo.addEventListener('input', ()=>{
+      const digits = somenteDigitos(codigo.value);
+      if(digits.length >= 34) extrair();
+    });
+
+    btnLimpar.addEventListener('click', ()=>{
+      codigo.value='';
+      resultado.hidden = true;
+      transportadorasWrap.hidden = true;
+      okMsg.style.display = 'none';
+      codigo.focus();
+    });
+
+    // Enter no campo código executa leitura
+    codigo.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){ e.preventDefault(); extrair(); }
+    });
+  </script>
+</body>
+</html>
