@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carregamento Expedição Grilazer</title>
+  <style>
+    :root{
+      --bg: #0ea5e9;
+      --bg2:#38bdf8;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --border:#e2e8f0;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --chip:#f8fafc;
+      --chip2:#f1f5f9;
+      --pending:#e0f2fe;
+      --pending-border:#bae6fd;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
+      color:var(--text);
+      min-height:100dvh;
+      background: linear-gradient(135deg, var(--bg), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{width:100%;max-width:980px}
+    .header{
+      color:#fff;
+      margin-bottom:14px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;}
+    .logo{
+      width:42px;height:42px;border-radius:12px;
+      background:#fff1;border:1px solid #fff3;
+      display:grid;place-items:center;
+      font-weight:800;color:#fff;
+      backdrop-filter: blur(8px);
+    }
+    .title{margin:0;font-size:22px;font-weight:800;letter-spacing:.2px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 12px 40px rgba(2,6,23,.15);
+      padding:22px;
+    }
+    label{display:block;font-weight:600;margin:12px 0 6px}
+    input{
+      width:100%;padding:14px 16px;border-radius:12px;
+      border:1px solid var(--border);font-size:16px;outline:none;background:#fff
+    }
+    input::placeholder{color:#94a3b8}
+    .hint{font-size:12px;color:#64748b;margin-top:6px}
+    .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    button{
+      appearance:none;border:0;border-radius:12px;padding:12px 14px;
+      font-weight:700;cursor:pointer;transition:transform .04s ease, box-shadow .2s ease
+    }
+    button:active{transform:translateY(1px)}
+    .ghost{background:#fff;border:1px solid var(--border);color:#0f172a}
+    .danger{background:var(--danger);color:#fff}
+    .primary{background:var(--primary);color:#fff}
+    .toggle{
+      background:#f8fafc;border:1px solid var(--border);color:#0f172a;
+      display:flex;align-items:center;gap:8px;
+    }
+    .toggle.on{background:#dcfce7;border-color:#86efac;color:#14532d}
+    .pill{
+      display:inline-block;padding:6px 10px;border-radius:999px;
+      background:var(--chip2);border:1px solid var(--border);font-weight:700;font-size:12px
+    }
+    .pendentes{
+      margin-top:12px;
+      background:var(--pending);
+      border:1px solid var(--pending-border);
+      border-radius:12px;
+      padding:10px;
+    }
+    .pendentes h4{
+      margin:0 0 8px 0;font-size:14px;display:flex;align-items:center;gap:8px
+    }
+    .pend-list{
+      display:flex;flex-wrap:wrap;gap:8px
+    }
+    .tag{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);
+      font-weight:700;font-size:12px
+    }
+    .tag button{
+      padding:0 6px;border-radius:8px;background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d;font-size:12px
+    }
+    .out{
+      margin-top:18px;background:#f8fafc;border:1px solid var(--border);
+      border-radius:12px;padding:14px;font-family:Consolas,Menlo,monospace
+    }
+    .k{color:#334155}.v{font-weight:800}
+    .grid{
+      margin-top:14px;
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+      gap:12px
+    }
+    .chip{
+      background:var(--chip);
+      border:1px solid var(--border);
+      padding:10px 10px;border-radius:12px;
+      font-weight:700;text-align:center;cursor:pointer;
+      font-size:13px; line-height:1.1;
+      box-shadow:0 2px 8px rgba(15,23,42,.05);
+      transition:all .2s ease
+    }
+    .chip:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(15,23,42,.08)}
+    .chip.selected{background:#e0e7ff;border-color:#c7d2fe}
+    .success{margin-top:10px;color:#16a34a;font-weight:700;display:none}
+    table{width:100%;border-collapse:collapse;margin-top:16px;background:#fff;border-radius:12px;overflow:hidden}
+    th,td{border:1px solid var(--border);padding:12px;font-size:14px;text-align:left}
+    th{background:#f1f5f9}
+    .empty{font-size:14px;color:#6b7280;text-align:center;padding:16px}
+    .status{
+      margin-top:10px;font-size:13px;color:#111;background:#fff;border:1px solid var(--border);
+      padding:10px 12px;border-radius:12px;white-space:pre-wrap
+    }
+    .status.ok{ background:#dcfce7; border-color:#86efac; color:#14532d; }
+    .status.warn{ background:#fef9c3; border-color:#fde047; color:#713f12; }
+    .status.err{ background:#fee2e2; border-color:#fecaca; color:#7f1d1d; }
+    .warnBox{margin-top:10px;background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:12px;font-size:13px}
+    .footer{margin-top:14px;color:#fff9;font-size:12px;text-align:center}
+    .hl{ background:#dcfce7 !important; transition: background .6s ease; }
+    .delbtn{
+      background:#fee2e2; border:1px solid #fecaca; color:#7f1d1d;
+      font-weight:800; padding:4px 8px; border-radius:8px; cursor:pointer;
+      font-size:12px; line-height:1; white-space:nowrap;
+    }
+    .delbtn:hover{ filter:brightness(0.97); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">GR</div>
+        <div>
+          <h1 class="title">Carregamento Expedição Grilazer</h1>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="subtitle">Status</div>
+        <div class="status mono warn" id="status">iniciando…</div>
+        <div class="subtitle" style="margin-top:6px">📦 Hoje: <span id="countHoje">0</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label for="codigo">Cole ou leia o código da NF-e</label>
+      <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
+      <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
+
+      <div class="out" id="resultado" hidden>
+        <div><span class="k">Nota (30º–34º):</span> <span class="v" id="concat"></span></div>
+        <div><span class="k">Lido em:</span> <span class="v" id="timestamp"></span></div>
+        <div><span class="k">UID:</span> <span class="v" id="who">—</span></div>
+      </div>
+
+      <div class="row">
+        <button class="ghost" id="btnSync">Sincronizar (listar)</button>
+        <button class="danger" id="btnLimpar">Limpar tela</button>
+        <button class="toggle" id="btnLote" title="Ativa/desativa o modo de notas em lote">🔘 Modo Lote: DESATIVADO</button>
+        <button class="primary" id="btnAbrirTransp" hidden>Transportadoras</button>
+        <span class="pill" id="badgePend" hidden>📦 Pendentes: 0</span>
+      </div>
+
+      <div id="pendentesBox" class="pendentes" hidden>
+        <h4>📦 Notas pendentes <small id="qtdPend">(0)</small>
+          <span style="flex:1"></span>
+          <button class="ghost" id="btnLimparPend" title="Limpar todas as pendentes">Limpar lista</button>
+        </h4>
+        <div class="pend-list" id="pendList"></div>
+        <div class="hint">Dica: com o <b>Modo Lote ATIVADO</b>, bipadas entram aqui. Clique em <b>Transportadoras</b> e escolha uma para aplicar a todas.</div>
+      </div>
+
+      <div id="transportadorasWrap" hidden>
+        <div class="hint" style="margin-top:10px">Selecione a transportadora:</div>
+        <div class="grid" id="gridTransportadoras"></div>
+        <div class="success" id="okMsg">Transportadora selecionada!</div>
+      </div>
+
+      <div class="row" id="searchArea">
+        <input id="buscaSeq" placeholder="Buscar pela nota (5 dígitos)" maxlength="5" style="flex:1" />
+        <button class="ghost" id="btnBuscar" title="Buscar por 5 dígitos">Buscar</button>
+      </div>
+
+      <div class="warnBox" id="tips" style="display:none"></div>
+
+      <div id="registros"></div>
+    </div>
+
+    <div class="footer">Grilazer</div>
+  </div>
+
+  <!-- SDKs Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script>
+    // ===== Config Firebase =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzCRqVlM2DkxI4vemxWcogkOTJc8DGkvg",
+      authDomain: "carregamento-bed8d.firebaseapp.com",
+      databaseURL: "https://carregamento-bed8d-default-rtdb.firebaseio.com",
+      projectId: "carregamento-bed8d",
+      storageBucket: "carregamento-bed8d.firebasestorage.app",
+      messagingSenderId: "1078318711627",
+      appId: "1:1078318711627:web:391ceb1afc50315030dece",
+      measurementId: "G-11T29VHSEB"
+    };
+
+    const statusBox = document.getElementById('status');
+    const tipsBox = document.getElementById('tips');
+    function setTips(html){ tipsBox.innerHTML = html; tipsBox.style.display='block'; }
+    function setStatus(msg, cls){
+      statusBox.textContent = msg;
+      statusBox.classList.remove('ok','warn','err');
+      if(cls) statusBox.classList.add(cls);
+    }
+
+    let app=null, auth=null, db=null, lastSavedKey=null, allowAutoFocus=true, autoFocusArmed=true;
+    let modoLote=false;
+    const DUP_GUARD_MS = 600; // Janela para evitar duplicatas da mesma leitura
+    let lastSeq = '', lastSeqAt = 0;
+    const pendentes=[]; // {seq, dataHora, uid, tsLocal}
+
+    async function iniciar(){
+      try{
+        if(!window.firebase || !firebase.initializeApp){
+          setTips('⚠️ Não foi possível carregar o SDK do Firebase. Prefira abrir em http://localhost (Live Server/servidor local).');
+          return setStatus('SDK não carregado', 'err');
+        }
+        setStatus('conectando…', 'warn');
+        app = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db   = firebase.database();
+
+        await auth.signInAnonymously();
+        const user = auth.currentUser;
+        if(!user){
+          setTips('⚠️ Ative Authentication → Método de login → Anônimo (Anonymous).');
+          return setStatus('falha no login anônimo', 'err');
+        }
+        document.getElementById('who').textContent = user.uid;
+        setStatus('conectado ✔', 'ok');
+      }catch(e){
+        const msg  = (e && e.message) || String(e);
+        setTips('⚠️ Erro ao iniciar: ' + msg);
+        setStatus('erro ao iniciar', 'err');
+      }
+    }
+
+    // ===== App =====
+    const LISTA = ['SUDOESTE/REUNIDAS','EUCATUR/TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS'];
+
+    const codigo = document.getElementById('codigo');
+    const resultado = document.getElementById('resultado');
+    const concatSpan = document.getElementById('concat');
+    const timestampSpan = document.getElementById('timestamp');
+    const transportadorasWrap = document.getElementById('transportadorasWrap');
+    const gridTransportadoras = document.getElementById('gridTransportadoras');
+    const okMsg = document.getElementById('okMsg');
+    const registrosDiv = document.getElementById('registros');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const btnSync = document.getElementById('btnSync');
+    const buscaSeq = document.getElementById('buscaSeq');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const searchArea = document.getElementById('searchArea');
+    const btnLote = document.getElementById('btnLote');
+    const btnAbrirTransp = document.getElementById('btnAbrirTransp');
+    const badgePend = document.getElementById('badgePend');
+    const pendentesBox = document.getElementById('pendentesBox');
+    const pendList = document.getElementById('pendList');
+    const btnLimparPend = document.getElementById('btnLimparPend');
+
+    function somenteDigitos(v){ return (v||'').toString().replace(/\D+/g,''); }
+
+    function construirBotoes(){
+      gridTransportadoras.innerHTML = '';
+      LISTA.forEach((nome) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = nome;
+        b.setAttribute('data-nome', nome);
+        b.addEventListener('click', () => selecionarTransportadora(nome));
+        gridTransportadoras.appendChild(b);
+      });
+    }
+
+    function atualizarPendentesUI(){
+      const n = pendentes.length;
+      badgePend.hidden = (n===0);
+      badgePend.textContent = `📦 Pendentes: ${n}`;
+      document.getElementById('qtdPend').textContent = `(${n})`;
+      pendentesBox.hidden = (n===0);
+      btnAbrirTransp.hidden = !(modoLote && n>0); // mostra botão só no lote com pendentes
+
+      pendList.innerHTML = '';
+      for(let i=0;i<pendentes.length;i++){
+        const p = pendentes[i];
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.innerHTML = `<span>${p.seq}</span> <button data-i="${i}" title="remover">×</button>`;
+        pendList.appendChild(tag);
+      }
+    }
+
+    pendList?.addEventListener('click', (e)=>{
+      const t = e.target;
+      if(t.tagName==='BUTTON' && t.hasAttribute('data-i')){
+        const i = parseInt(t.getAttribute('data-i'),10);
+        if(!isNaN(i)){ pendentes.splice(i,1); atualizarPendentesUI(); }
+      }
+    });
+    btnLimparPend?.addEventListener('click', ()=>{ pendentes.splice(0, pendentes.length); atualizarPendentesUI(); });
+
+    btnAbrirTransp.addEventListener('click', ()=>{
+      construirBotoes();
+      transportadorasWrap.hidden = false;
+      okMsg.style.display = 'block';
+      okMsg.textContent = 'Selecione a transportadora para aplicar ao lote';
+      setTimeout(()=> okMsg.style.display='none', 1400);
+    });
+
+    function extrair(){
+      const digits = somenteDigitos(codigo.value);
+      if(digits.length < 34){
+        if(!modoLote){
+          resultado.hidden = true;
+          transportadorasWrap.hidden = true;
+        }
+        return;
+      }
+      const seq = digits.slice(29,34);
+      const agora = new Date();
+      const dataHora = agora.toLocaleString('pt-BR');
+
+      // Anti-duplicata (mesmo seq dentro de uma janela curta)
+      const now = Date.now();
+      if (modoLote){
+        if (seq === lastSeq && (now - lastSeqAt) < DUP_GUARD_MS){
+          // Ignora duplicata imediata
+          codigo.value = '';
+          autoFocusArmed = true; allowAutoFocus = true; focusLeitor();
+          return;
+        }
+        lastSeq = seq; lastSeqAt = now;
+      }
+
+      concatSpan.textContent = seq;
+      timestampSpan.textContent = dataHora;
+
+      if(modoLote){
+        pendentes.push({ seq, dataHora, uid: (firebase.auth().currentUser?.uid||null), tsLocal: now });
+        atualizarPendentesUI();
+        // Limpa e prepara próxima leitura
+        codigo.value = '';
+        autoFocusArmed = true; allowAutoFocus = true; focusLeitor();
+        transportadorasWrap.hidden = true; // não abre automaticamente no lote
+        return seq;
+      }else{
+        // Individual: mostra transportadoras e pausa auto-foco para não roubar a busca
+        resultado.hidden = false;
+        construirBotoes();
+        transportadorasWrap.hidden = false;
+        allowAutoFocus = false; autoFocusArmed = false;
+        return seq;
+      }
+    }
+
+    function resetForNext(){
+      codigo.value = '';
+      resultado.hidden = true;
+      transportadorasWrap.hidden = true;
+      document.querySelectorAll('.chip.selected').forEach(el=>el.classList.remove('selected'));
+      setTimeout(()=> { autoFocusArmed = true; allowAutoFocus = true; focusLeitor(); }, 10);
+    }
+
+    async function salvarUmRegistro(seq, dataHora, nome){
+      const ref = db.ref('leituras').push();
+      await ref.set({
+        seq, dataHora, transportadora: nome,
+        uid: firebase.auth().currentUser?.uid || null,
+        ts: firebase.database.ServerValue.TIMESTAMP
+      });
+      lastSavedKey = ref.key;
+    }
+
+    async function selecionarTransportadora(nome){
+      if(!db || !firebase.auth().currentUser){
+        setTips('⚠️ Firebase não iniciado. Recarregue a página.');
+        return;
+      }
+
+      if(modoLote && pendentes.length){
+        try{
+          for(const p of pendentes){
+            await salvarUmRegistro(p.seq, p.dataHora, nome);
+          }
+          setStatus(`registradas ${pendentes.length} notas em ${nome}`, 'ok');
+          pendentes.splice(0, pendentes.length);
+          atualizarPendentesUI();
+          resetForNext();
+        }catch(e){
+          setTips('⚠️ Erro ao salvar em lote: ' + e);
+        }
+        return;
+      }
+
+      // Individual
+      document.querySelectorAll('.chip.selected').forEach(el=>el.classList.remove('selected'));
+      const btn = Array.from(document.querySelectorAll('.chip')).find(b => b.dataset.nome === nome);
+      if(btn) btn.classList.add('selected');
+
+      okMsg.style.display = 'block';
+      okMsg.textContent = 'Transportadora selecionada: ' + nome;
+      setTimeout(()=> okMsg.style.display='none', 1200);
+
+      const seq = concatSpan.textContent.trim();
+      const dataHora = timestampSpan.textContent.trim();
+      try{
+        await salvarUmRegistro(seq, dataHora, nome);
+        setStatus('conectado ✔', 'ok');
+        resetForNext();
+      }catch(e){
+        setTips('⚠️ Erro ao salvar no Firebase: ' + e);
+      }
+    }
+
+    function inicioDoDiaTS(){ const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); }
+    function fimDoDiaTS(){ const d = new Date(); d.setHours(23,59,59,999); return d.getTime(); }
+
+    function renderTable(rows, highlightKey){
+      rows.sort((a,b)=> (b.ts||0)-(a.ts||0));
+      const ini = inicioDoDiaTS(), fim = fimDoDiaTS();
+      const countHoje = rows.filter(r => typeof r.ts==='number' && r.ts>=ini && r.ts<=fim).length;
+      const span = document.getElementById('countHoje');
+      if(span) span.textContent = countHoje.toString();
+
+      if(!rows.length){
+        registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>';
+        return;
+      }
+      let html = '<table><thead><tr><th>Nota (5 dígitos)</th><th>Data/Hora</th><th>Transportadora</th><th>Ações</th></tr></thead><tbody>';
+      for(const r of rows){
+        const cls = (highlightKey && r._key===highlightKey) ? ' class="hl"' : '';
+        html += `<tr${cls}><td>${r.seq||''}</td><td>${r.dataHora||''}</td><td>${r.transportadora||''}</td>`+
+                `<td><button class="delbtn" data-key="${r._key}">×</button></td></tr>`;
+      }
+      html += '</tbody></table>';
+      registrosDiv.innerHTML = html;
+      if(highlightKey){
+        setTimeout(()=>{ document.querySelectorAll('tr.hl').forEach(tr => tr.classList.remove('hl')); }, 2000);
+      }
+    }
+
+    async function listar(){
+      if(!db){ setTips('⚠️ Firebase não iniciado.'); return; }
+      try{
+        const snap = await db.ref('leituras').limitToLast(500).get();
+        const val = snap.val();
+        if(!val){ registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>'; return; }
+        const linhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
+        renderTable(linhas, lastSavedKey);
+      }catch(e){ setTips('⚠️ Erro ao listar: ' + e); }
+    }
+
+    async function buscar(){
+      if(!db){ setTips('⚠️ Firebase não iniciado.'); return; }
+      const seq = (buscaSeq.value || '').trim();
+      if(!seq || seq.length !== 5){ alert('Informe exatamente 5 dígitos.'); return; }
+      try{
+        const snap = await db.ref('leituras').orderByChild('seq').equalTo(seq).get();
+        const val = snap.val();
+        if(!val){ registrosDiv.innerHTML = '<div class="empty">Nenhum registro encontrado para a nota '+seq+'.</div>'; return; }
+        const linhas = Object.entries(val).map(([k,v])=> ({...v, _key:k}));
+        renderTable(linhas, null);
+      }catch(e){
+        const msg = (e && e.message) ? e.message : String(e||'');
+        if(msg.includes('indexOn')){
+          setTips('⚠️ Adicione o índice nas Regras do Realtime Database:\n\n{\n  \"rules\": {\n    \"leituras\": {\n      \".read\": \"auth != null\",\n      \".write\": \"auth != null\",\n      \".indexOn\": [\"seq\", \"ts\"]\n    }\n  }\n}');
+          try{
+            const snapAll = await db.ref('leituras').limitToLast(2000).get();
+            const valAll = snapAll.val();
+            if(!valAll){ registrosDiv.innerHTML = '<div class="empty">Sem registros para varrer.</div>'; return; }
+            const todos = Object.entries(valAll).map(([k,v])=> ({...v, _key:k}));
+            const filtrados = todos.filter(r => (r && r.seq) === seq);
+            if(!filtrados.length){ registrosDiv.innerHTML = '<div class="empty">Nenhum registro encontrado (fallback).</div>'; return; }
+            renderTable(filtrados, null);
+          }catch(e2){ setTips('⚠️ Erro na busca (fallback): ' + e2); }
+        }else{
+          setTips('⚠️ Erro na busca: ' + msg);
+        }
+      }
+    }
+
+    // Exclusão
+    async function excluirRegistro(key){
+      if(!db) { setTips('⚠️ Firebase não iniciado.'); return; }
+      if(!key) return;
+      const ok = confirm('Excluir este registro?');
+      if(!ok) return;
+      try{
+        await db.ref('leituras/'+key).remove();
+        await listar();
+      }catch(e){
+        setTips('⚠️ Erro ao excluir: ' + e);
+      }
+    }
+    registrosDiv.addEventListener('click', (ev)=>{
+      const t = ev.target;
+      if(t && t.classList.contains('delbtn')){
+        const key = t.getAttribute('data-key');
+        excluirRegistro(key);
+      }
+    });
+
+    // Foco one-shot + bloqueio de ENTER/TAB após leitura
+    function focusLeitor(){ if(!allowAutoFocus || !autoFocusArmed) return; try{ codigo.focus(); codigo.select?.(); autoFocusArmed=false; }catch(_){} }
+    window.addEventListener('focus', ()=> focusLeitor());
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') focusLeitor(); });
+    codigo.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== codigo) focusLeitor(); }, 50));
+    // Bloquear Enter/Tab quando já temos 34+ dígitos, para não "saltar" foco
+    codigo.addEventListener('keydown', (e)=>{
+      const done = (somenteDigitos(codigo.value).length >= 34);
+      if(done && (e.key === 'Enter' || e.key === 'Tab')){
+        e.preventDefault(); e.stopPropagation();
+        return false;
+      }
+    }, true);
+
+    searchArea.addEventListener('pointerdown', ()=>{ allowAutoFocus = false; autoFocusArmed = false; });
+    buscaSeq.addEventListener('focus', ()=>{ allowAutoFocus = false; autoFocusArmed = false; });
+
+    // Debounce da leitura (60ms) para evitar duplicação de eventos do leitor
+    let _scanTimer=null;
+    codigo.addEventListener('input', ()=>{
+      if(_scanTimer) clearTimeout(_scanTimer);
+      _scanTimer = setTimeout(()=>{
+        const digits = somenteDigitos(codigo.value);
+        if(digits.length >= 34){
+          extrair();
+        }
+      }, 60);
+    });
+
+    // Modo Lote
+    function atualizarBotaoLote(){
+      btnLote.classList.toggle('on', modoLote);
+      btnLote.textContent = modoLote ? '🟢 Modo Lote: ATIVADO' : '🔘 Modo Lote: DESATIVADO';
+      atualizarPendentesUI(); // para atualizar visibilidade do botão Transportadoras
+    }
+    btnLote.addEventListener('click', ()=>{
+      modoLote = !modoLote;
+      atualizarBotaoLote();
+      if(!modoLote){
+        resultado.hidden = true;
+        transportadorasWrap.hidden = true;
+      }else{
+        // No momento de ativar, mostra o botão Transportadoras se já houver pendentes
+        atualizarPendentesUI();
+      }
+      autoFocusArmed = true; focusLeitor();
+    });
+    atualizarBotaoLote();
+
+    // Eventos principais
+    btnSync.addEventListener('click', listar);
+    btnLimpar.addEventListener('click', ()=>{
+      codigo.value='';
+      resultado.hidden = true;
+      transportadorasWrap.hidden = true;
+      registrosDiv.innerHTML = '';
+      allowAutoFocus = true; autoFocusArmed = true; focusLeitor();
+    });
+    btnBuscar.addEventListener('click', buscar);
+    buscaSeq.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); buscar(); }});
+
+    // Boot
+    window.addEventListener('load', ()=>{ iniciar(); autoFocusArmed = true; focusLeitor(); });
+  </script>
+</body>
+</html>
