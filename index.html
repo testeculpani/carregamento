@@ -120,7 +120,6 @@
       transition:all .2s ease;
       color:#0f172a;
     }
-    .chip:hover{}
     .chip.selected{outline:2px solid #c7d2fe; outline-offset: 1px}
     .success{margin-top:10px;color:#16a34a;font-weight:700;display:none}
     table{width:100%;border-collapse:collapse;margin-top:16px;background:#fff;border-radius:12px;overflow:hidden}
@@ -172,6 +171,15 @@
       <label for="codigo">Cole ou leia o código da NF-e</label>
       <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
       <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
+
+      <!-- 🔹 NOVO BLOCO: NOTA MANUAL 5 DÍGITOS -->
+      <label for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
+      <div class="row" id="manualArea">
+        <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" style="flex:1" />
+        <button class="ghost" id="btnManual">Adicionar manual</button>
+      </div>
+      <div class="hint">Use esta opção para notas emitidas manualmente, sem chave de 44 dígitos.</div>
+      <!-- 🔹 FIM NOVO BLOCO -->
 
       <div class="out" id="resultado" hidden>
         <div><span class="k">Nota (30º–34º):</span> <span class="v" id="concat"></span></div>
@@ -298,6 +306,8 @@
     ];
 
     const codigo = document.getElementById('codigo');
+    const manualSeq = document.getElementById('manualSeq');
+    const btnManual = document.getElementById('btnManual');
     const resultado = document.getElementById('resultado');
     const concatSpan = document.getElementById('concat');
     const timestampSpan = document.getElementById('timestamp');
@@ -412,8 +422,29 @@
       }
     }
 
+    // 🔹 FUNÇÃO NOVA: USAR NOTA MANUAL (5 DÍGITOS)
+    function usarManual(){
+      if(!manualSeq) return;
+      const seq = somenteDigitos(manualSeq.value);
+      if(seq.length !== 5){
+        alert('Informe exatamente 5 dígitos para a nota manual.');
+        return;
+      }
+      const agora = new Date();
+      const dataHora = agora.toLocaleString('pt-BR');
+      concatSpan.textContent = seq;
+      timestampSpan.textContent = dataHora;
+      resultado.hidden = false;
+      construirBotoes();
+      transportadorasWrap.hidden = false;
+      allowAutoFocus = false;
+      autoFocusArmed = false;
+      codigo.value = '';
+    }
+
     function resetForNext(){
       codigo.value = '';
+      if(manualSeq) manualSeq.value = '';
       resultado.hidden = true;
       transportadorasWrap.hidden = true;
       document.querySelectorAll('.chip.selected').forEach(el=>el.classList.remove('selected'));
@@ -570,7 +601,7 @@
       }catch(e){
         const msg = (e && e.message) ? e.message : String(e||'');
         if(msg.includes('indexOn')){
-          setTips('⚠️ Adicione o índice nas Regras do Realtime Database:\n\n{\n  \"rules\": {\n    \"leituras\": {\n      \".read\": \"auth != null\",\n      \".write\": \"auth != null\",\n      \".indexOn\": [\"seq\", \"ts\"]\n    }\n  }\n}');
+          setTips('⚠️ Adicione o índice nas Regras do Realtime Database:\n\n{\n  "rules": {\n    "leituras": {\n      ".read": "auth != null",\n      ".write": "auth != null",\n      ".indexOn": ["seq", "ts"]\n    }\n  }\n}');
           try{
             const snapAll = await db.ref('leituras').limitToLast(2000).get();
             const valAll = snapAll.val();
@@ -653,6 +684,7 @@
     btnSync.addEventListener('click', listar);
     btnLimpar.addEventListener('click', ()=>{
       codigo.value='';
+      if(manualSeq) manualSeq.value='';
       resultado.hidden = true;
       transportadorasWrap.hidden = true;
       registrosDiv.innerHTML = '';
@@ -660,6 +692,18 @@
     });
     btnBuscar.addEventListener('click', buscar);
     buscaSeq.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); buscar(); }});
+
+    if(btnManual){
+      btnManual.addEventListener('click', usarManual);
+    }
+    if(manualSeq){
+      manualSeq.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          usarManual();
+        }
+      });
+    }
 
     window.addEventListener('load', ()=>{ iniciar(); autoFocusArmed = true; focusLeitor(); });
   </script>
