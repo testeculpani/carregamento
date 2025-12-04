@@ -1,711 +1,842 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Carregamento Expedição Grilazer</title>
+  <meta charset="UTF-8">
+  <title>Painel de Vendas por Vendedor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    :root{
-      --bg: #0ea5e9;
-      --bg2:#38bdf8;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#64748b;
-      --primary:#2563eb;
-      --border:#e2e8f0;
-      --ok:#16a34a;
-      --warn:#f59e0b;
-      --danger:#ef4444;
-      --chip:#f8fafc;
-      --chip2:#f1f5f9;
-      --pending:#e0f2fe;
-      --pending-border:#bae6fd;
+    * {
+      box-sizing: border-box;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
-      color:var(--text);
-      min-height:100dvh;
-      background: linear-gradient(135deg, var(--bg), var(--bg2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #0f172a;
     }
-    .wrap{width:100%;max-width:980px}
-    .header{
-      color:#fff;
-      margin-bottom:14px;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+      padding: 24px 26px 28px 26px;
+      position: relative;
+      overflow: hidden;
     }
-    .brand{display:flex;align-items:center;gap:12px;}
-    .logo{
-      width:42px;height:42px;border-radius:12px;
-      background:#fff1;border:1px solid #fff3;
-      display:grid;place-items:center;
-      font-weight:800;color:#fff;
-      backdrop-filter: blur(8px);
+    .container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 55%),
+                  radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.13), transparent 55%);
+      pointer-events: none;
+      z-index: -1;
     }
-    .title{margin:0;font-size:22px;font-weight:800;letter-spacing:.2px}
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:16px;
-      box-shadow:0 12px 40px rgba(2,6,23,.15);
-      padding:22px;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
     }
-    label{display:block;font-weight:600;margin:12px 0 6px}
-    input{
-      width:100%;padding:14px 16px;border-radius:12px;
-      border:1px solid var(--border);font-size:16px;outline:none;background:#fff
+    .title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    input::placeholder{color:#94a3b8}
-    .hint{font-size:12px;color:#64748b;margin-top:6px}
-    .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
-    button{
-      appearance:none;border:0;border-radius:12px;padding:12px 14px;
-      font-weight:700;cursor:pointer;transition:transform .04s ease, box-shadow .2s ease
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #020617;
     }
-    button:active{transform:translateY(1px)}
-    .ghost{background:#fff;border:1px solid var(--border);color:#0f172a}
-    .danger{background:var(--danger);color:#fff}
-    .primary{background:var(--primary);color:#fff}
-    .toggle{
-      background:#f8fafc;border:1px solid var(--border);color:#0f172a;
-      display:flex;align-items:center;gap:8px;
+    h1 span.icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+      box-shadow: 0 6px 16px rgba(34, 197, 94, 0.45);
     }
-    .toggle.on{background:#dcfce7;border-color:#86efac;color:#14532d}
-    .pill{
-      display:inline-block;padding:6px 10px;border-radius:999px;
-      background:var(--chip2);border:1px solid var(--border);font-weight:700;font-size:12px
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
     }
-    .pendentes{
-      margin-top:12px;
-      background:var(--pending);
-      border:1px solid var(--pending-border);
-      border-radius:12px;
-      padding:10px;
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
-    .pendentes h4{
-      margin:0 0 8px 0;font-size:14px;display:flex;align-items:center;gap:8px
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
     }
-    .pend-list{
-      display:flex;flex-wrap:wrap;gap:8px
+
+    .upload-area {
+      margin-top: 12px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px dashed #cbd5f5;
+      background: #f8fafc;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+      justify-content: space-between;
     }
-    .tag{
-      display:flex;align-items:center;gap:6px;
-      padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--border);
-      font-weight:700;font-size:12px
+    .upload-info {
+      font-size: 13px;
+      color: #475569;
     }
-    .tag button{
-      padding:0 6px;border-radius:8px;background:#fee2e2;border:1px solid #fecaca;color:#7f1d1d;font-size:12px
+    .upload-info strong {
+      color: #0f172a;
     }
-    .out{
-      margin-top:18px;background:#f8fafc;border:1px solid var(--border);
-      border-radius:12px;padding:14px;font-family:Consolas,Menlo,monospace
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
     }
-    .k{color:#334155}.v{font-weight:800}
-    .grid{
-      margin-top:14px;
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-      gap:12px
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
     }
-    .chip{
-      border:1px solid var(--border);
-      padding:10px 10px;border-radius:12px;
-      font-weight:700;text-align:center;cursor:pointer;
-      font-size:13px; line-height:1.1;
-      box-shadow:0 2px 8px rgba(15,23,42,.05);
-      transition:all .2s ease;
-      color:#0f172a;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 14px;
+      border: none;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(14, 165, 233, 0.45);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+      white-space: nowrap;
     }
-    .chip.selected{outline:2px solid #c7d2fe; outline-offset: 1px}
-    .success{margin-top:10px;color:#16a34a;font-weight:700;display:none}
-    table{width:100%;border-collapse:collapse;margin-top:16px;background:#fff;border-radius:12px;overflow:hidden}
-    th,td{border:1px solid var(--border);padding:12px;font-size:14px;text-align:left}
-    th{background:#f1f5f9}
-    .empty{font-size:14px;color:#6b7280;text-align:center;padding:16px}
-    .status{
-      margin-top:10px;font-size:13px;color:#111;background:#fff;border:1px solid var(--border);
-      padding:10px 12px;border-radius:12px;white-space:pre-wrap
+    .btn.secondary {
+      background: #0f172a;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.4);
     }
-    .status.ok{ background:#dcfce7; border-color:#86efac; color:#14532d; }
-    .status.warn{ background:#fef9c3; border-color:#fde047; color:#713f12; }
-    .status.err{ background:#fee2e2; border-color:#fecaca; color:#7f1d1d; }
-    .warnBox{margin-top:10px;background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;padding:10px;border-radius:12px;font-size:13px}
-    .footer{margin-top:14px;color:#fff9;font-size:12px;text-align:center}
-    .hl{ background:#dcfce7 !important; transition: background .6s ease; }
-    .delbtn{
-      background:#fee2e2; border:1px solid #fecaca; color:#7f1d1d;
-      font-weight:800; padding:4px 8px; border-radius:8px; cursor:pointer;
-      font-size:12px; line-height:1; white-space:nowrap;
+    .btn span.icon {
+      font-size: 15px;
     }
-    .delbtn:hover{ filter:brightness(0.97); }
-    .summary{
-      margin-top:16px;
-      background:#f8fafc;border:1px solid var(--border);
-      border-radius:12px;padding:12px 14px;line-height:1.6;
-      font-weight:700;color:#0f172a;
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 6px 14px rgba(14, 165, 233, 0.4);
+      filter: brightness(0.98);
     }
-    .summary span{font-weight:800}
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .summary-card {
+      background: white;
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .summary-label {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .summary-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .summary-chip {
+      font-size: 11px;
+      color: #16a34a;
+    }
+
+    .actions-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: #64748b;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .hint {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .table-wrapper {
+      margin-top: 4px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead {
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    th, td {
+      padding: 8px 10px;
+      text-align: left;
+    }
+    th {
+      font-weight: 600;
+      border-bottom: 1px solid #1e293b;
+      cursor: default;
+      user-select: none;
+    }
+    th.sortable {
+      cursor: pointer;
+    }
+    th.sortable:hover {
+      background: #111827;
+    }
+    th .sort-indicator {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+    tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    tbody tr:hover {
+      background: #e0f2fe;
+    }
+    .td-vendedor {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .td-total {
+      font-feature-settings: "tnum" 1, "lnum" 1;
+      text-align: right;
+    }
+    .td-resp {
+      text-align: center;
+      font-size: 12px;
+    }
+    .tag-alexandre {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #16a34a;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .tag-jumahil {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #dc2626;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .empty-state {
+      padding: 16px;
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+    }
+    .footer-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Aba de vendedores sem venda */
+    #semVendasWrapper {
+      margin-top: 16px;
+      display: none;
+    }
+    #semVendasWrapper h3 {
+      font-size: 15px;
+      margin: 0 0 6px 0;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #semVendasWrapper h3 span {
+      font-size: 18px;
+    }
+    #semVendasWrapper .subtitle-small {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 820px) {
+      .container {
+        padding: 18px 16px 22px 16px;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+      th, td {
+        padding: 7px 8px;
+      }
+      .actions-row {
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="brand">
-        <div class="logo">GR</div>
-        <div>
-          <h1 class="title">Carregamento Expedição Grilazer</h1>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div class="subtitle">Status</div>
-        <div class="status mono warn" id="status">iniciando…</div>
-        <div class="subtitle" style="margin-top:6px">📦 Hoje: <span id="countHoje">0</span></div>
+
+<div class="container">
+  <header>
+    <div class="title-area">
+      <h1><span class="icon">₿</span> Painel de Vendas por Vendedor</h1>
+      <div class="subtitle">
+        Importe sua planilha e veja o total vendido por cada vendedor<br>
+        <small>
+          Soma da coluna <strong>J</strong> por vendedor da <strong>I</strong>,<br>
+          apenas se:
+          <strong>R</strong> começar com "venda" e
+          <strong>B</strong> for Pendente / Aprovado / Atendido / Em Alteração / Validado. <br>
+          Alguns vendedores são marcados como <strong>ALEXANDRE</strong> (verde) ou <strong>JUMAHIL</strong> (vermelho).
+        </small>
       </div>
     </div>
-
-    <div class="card">
-      <label for="codigo">Cole ou leia o código da NF-e</label>
-      <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
-      <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
-
-      <!-- 🔹 NOVO BLOCO: NOTA MANUAL 5 DÍGITOS -->
-      <label for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
-      <div class="row" id="manualArea">
-        <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" style="flex:1" />
-        <button class="ghost" id="btnManual">Adicionar manual</button>
-      </div>
-      <div class="hint">Use esta opção para notas emitidas manualmente, sem chave de 44 dígitos.</div>
-      <!-- 🔹 FIM NOVO BLOCO -->
-
-      <div class="out" id="resultado" hidden>
-        <div><span class="k">Nota (30º–34º):</span> <span class="v" id="concat"></span></div>
-        <div><span class="k">Lido em:</span> <span class="v" id="timestamp"></span></div>
-        <div><span class="k">UID:</span> <span class="v" id="who">—</span></div>
-      </div>
-
-      <div class="row">
-        <button class="ghost" id="btnSync">Sincronizar (listar)</button>
-        <button class="danger" id="btnLimpar">Limpar tela</button>
-        <button class="toggle" id="btnLote" title="Ativa/desativa o modo de notas em lote">🔘 Modo Lote: DESATIVADO</button>
-        <button class="primary" id="btnAbrirTransp" hidden>Transportadoras</button>
-        <span class="pill" id="badgePend" hidden>📦 Pendentes: 0</span>
-      </div>
-
-      <div id="pendentesBox" class="pendentes" hidden>
-        <h4>📦 Notas pendentes <small id="qtdPend">(0)</small>
-          <span style="flex:1"></span>
-          <button class="ghost" id="btnLimparPend" title="Limpar todas as pendentes">Limpar lista</button>
-        </h4>
-        <div class="pend-list" id="pendList"></div>
-        <div class="hint">Dica: com o <b>Modo Lote ATIVADO</b>, bipadas entram aqui. Clique em <b>Transportadoras</b> e escolha uma para aplicar a todas.</div>
-      </div>
-
-      <div id="transportadorasWrap" hidden>
-        <div class="hint" style="margin-top:10px">Selecione a transportadora:</div>
-        <div class="grid" id="gridTransportadoras"></div>
-        <div class="success" id="okMsg">Transportadora selecionada!</div>
-      </div>
-
-      <div class="row" id="searchArea">
-        <input id="buscaSeq" placeholder="Buscar pela nota (5 dígitos)" maxlength="5" style="flex:1" />
-        <button class="ghost" id="btnBuscar" title="Buscar por 5 dígitos">Buscar</button>
-      </div>
-
-      <div class="summary" id="resumo">
-        <div>📅 Hoje: <span id="sumHoje">0</span></div>
-        <div>📆 Semana: <span id="sumSemana">0</span></div>
-        <div>🗓️ Mês: <span id="sumMes">0</span></div>
-      </div>
-
-      <div class="warnBox" id="tips" style="display:none"></div>
-
-      <div id="registros"></div>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      J = valor · I = vendedor · R "venda..." · B status válido
     </div>
+  </header>
 
-    <div class="footer">Grilazer</div>
+  <div class="upload-area">
+    <div class="upload-info">
+      <div><strong>1)</strong> Clique no botão ao lado e selecione sua planilha (.xls ou .xlsx).</div>
+      <div><strong>2)</strong> Entram no cálculo só as linhas com R iniciando em <strong>"venda"</strong> e status da coluna <strong>B</strong> permitido.</div>
+    </div>
+    <div class="file-input-wrapper">
+      <button class="btn">
+        <span class="icon">📎</span>
+        Importar planilha
+      </button>
+      <input type="file" id="inputExcel" accept=".xlsx, .xls">
+    </div>
   </div>
 
-  <!-- SDKs Firebase (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-label">Total geral vendido</div>
+      <div id="totalGeral" class="summary-value">R$ 0,00</div>
+      <div class="summary-chip" id="totalRegistros">0 linhas válidas</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Quantidade de vendedores</div>
+      <div id="qtdVendedores" class="summary-value">0</div>
+      <div class="summary-chip">Com pelo menos 1 venda válida</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Maior vendedor</div>
+      <div id="topVendedor" class="summary-value">–</div>
+      <div class="summary-chip" id="topVendedorValor">R$ 0,00</div>
+    </div>
+  </div>
 
-  <script>
-    // ===== Config Firebase =====
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzCRqVlM2DkxI4vemxWcogkOTJc8DGkvg",
-      authDomain: "carregamento-bed8d.firebaseapp.com",
-      databaseURL: "https://carregamento-bed8d-default-rtdb.firebaseio.com",
-      projectId: "carregamento-bed8d",
-      storageBucket: "carregamento-bed8d.firebasestorage.app",
-      messagingSenderId: "1078318711627",
-      appId: "1:1078318711627:web:391ceb1afc50315030dece",
-      measurementId: "G-11T29VHSEB"
+  <div class="actions-row">
+    <span class="hint">Clique em <strong>Responsável</strong> para ordenar por supervisor.</span>
+    <button class="btn secondary" id="btnSemVendas">
+      <span class="icon">🔍</span>
+      Ver vendedores ALEXANDRE/JUMAHIL sem vendas
+    </button>
+  </div>
+
+  <div class="table-wrapper" id="tabelaContainer">
+    <table>
+      <thead>
+        <tr>
+          <th id="thVendedor" class="sortable">Vendedor (I) <span class="sort-indicator" id="sortIndicadorV">▼</span></th>
+          <th style="text-align:right;">Total vendido (soma de J)</th>
+          <th id="thResponsavel" class="sortable" style="text-align:center;">
+            Responsável
+            <span class="sort-indicator" id="sortIndicadorR">-</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbodyVendedores">
+        <tr><td colspan="3" class="empty-state">Nenhuma planilha importada ainda.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="semVendasWrapper">
+    <h3><span>📋</span> Vendedores ALEXANDRE / JUMAHIL sem nenhuma venda</h3>
+    <div class="subtitle-small">Considerando apenas a regra atual de filtro (R iniciando em "venda" e status B permitido).</div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Vendedor</th>
+            <th style="text-align:center;">Responsável</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody id="tbodySemVendas">
+          <tr><td colspan="3" class="empty-state">Importe uma planilha para ver os resultados.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span>Lendo colunas <strong>I</strong> (vendedor), <strong>J</strong> (valor), <strong>R</strong> (descrição) e <strong>B</strong> (status).</span>
+    <span>Apenas linhas com R iniciando em "venda" e status B dentro da lista entram no cálculo. Vendedores podem ser ALEXANDRE ou JUMAHIL.</span>
+  </div>
+</div>
+
+<script>
+  const inputExcel = document.getElementById('inputExcel');
+  const tbodyVendedores = document.getElementById('tbodyVendedores');
+  const tbodySemVendas = document.getElementById('tbodySemVendas');
+  const totalGeralEl = document.getElementById('totalGeral');
+  const totalRegistrosEl = document.getElementById('totalRegistros');
+  const qtdVendedoresEl = document.getElementById('qtdVendedores');
+  const topVendedorEl = document.getElementById('topVendedor');
+  const topVendedorValorEl = document.getElementById('topVendedorValor');
+  const btnSemVendas = document.getElementById('btnSemVendas');
+  const semVendasWrapper = document.getElementById('semVendasWrapper');
+
+  const thResponsavel = document.getElementById('thResponsavel');
+  const thVendedor = document.getElementById('thVendedor');
+  const sortIndicadorV = document.getElementById('sortIndicadorV');
+  const sortIndicadorR = document.getElementById('sortIndicadorR');
+
+  const STATUS_VALIDOS = [
+    'pendente',
+    'aprovado',
+    'atendido',
+    'em alteração',
+    'em alteracao',
+    'validado'
+  ];
+
+  // Lista de vendedores ALEXANDRE
+  const VENDEDORES_ALEXANDRE = [
+    "ANDERSON MAICO FREDERICO REPRESENTACOES COMER",
+    "J. G. VARGAS REPRESENTACOES COMERCIAIS MARING",
+    "60.132.034 MOHANDAS VINICIUS DA SILVA DELL IS",
+    "HOPPE REPRESENTACOES LTDA",
+    "FURLANETTO E GONCALVES LTDA",
+    "ROGERIO ANTONELLO DA ROSA",
+    "TAVARES IMPORTAÇÃO E COMERCIO LTDA",
+    "MICAEL MENEZES DE OLIVEIRA",
+    "ANGELA DE FATIMA ALVES SOUZA 48825433034",
+    "P. F. VIEIRA FARIA & CIA LTDA",
+    "ROCELU REPRESENTACAO COMERCIAL LTDA",
+    "AUTHENTIC SALES REPRESENTACOES LTDA",
+    "MAZINHO REPRESENTACAO COMERCIAL LTDA",
+    "V9 REPRESENTACOES E EVENTOS LTDA",
+    "AMARILDO DE LELIS OLIVEIRA RIOS",
+    "STRONG REPRESENTACOES LTDA",
+    "J. R. QUARESMA REPRESENTACAO COMERCIAL DE U. D. LTDA",
+    "CARLOS ALBERTO LEHRBACK BARBOSA ME",
+    "JOSE WANDERLEY PEREIRA DOS SANTOS REPRES",
+    "R C SANTOS REPRESENTACOES LTDA",
+    "MARFIGRAN SP DISTRIBUIDORA LTDA",
+    "REMA REPRESENTACAO E APOIO ADMINISTRATIVO LTD",
+    "MARCIO CORAINE",
+    "AATR - REPRESENTACOES COMERCIAIS LTDA",
+    "FEROLETO REPRESENTACAO E COMERCIO DE UTILIDAD",
+    "WELLINGTON L. F. ARTAL LTDA",
+    "DAL EVEDOVE LIMA COMERCIAL LTDA",
+    "MENESES E BRAGA REPRESENTACOES LTDA ME",
+    "FORTES REPRESENTACOES LTDA",
+    "RICARDO BEZERRA REPRESENTACOES LTDA",
+    "VALDEMIR ASTRESSE",
+    "53.836.657 FRANCISCO CARDOSO DE SOUSA ROCHA",
+    "RRB REPRESENTACAO E COMERCIO DE ARTIGOS ESPORTIVOS LTDA",
+    "MAPRI REPRESENTAÇÕES LTDA"
+  ];
+
+  // Lista de vendedores JUMAHIL
+  const VENDEDORES_JUMAHIL = [
+    "CLEBSON MARQUES LOPES 71545808287",
+    "J F A N REPRESENTACOES LTDA",
+    "E CORDEIRO CAMPOS",
+    "ERISVALDO PEREIRA FERREIRA",
+    "SETCOM COMERCIO LTDA",
+    "V. R. PACIFICO",
+    "A B DE OLIVEIRA FILHO REPRESENTACOES LTDA",
+    "JOANE SILVA SANTOS",
+    "FENIX REPRESENTACOES LTDA",
+    "J P DA SILVA REPRESENTANTE COMERCIAL EIRELI",
+    "E O DUARTE REPRESENTACOES LTDA.",
+    "JK COMERCIO E REPRESENTACAO LTDA",
+    "HUNTERS REPRESENTAÇÕES LTDA",
+    "LUIZ H. ZORDAN",
+    "MARCONI REPRESENTAÇOES",
+    "C N DE MELO REPRESENTACOES DE MATERIAL DE CON",
+    "ELUILSON FELIPE DE SOUZA JUNIOR - ME",
+    "CURITINTAS REPRESENTACOES EIRELI",
+    "E.M. RIBEIRO LTDA",
+    "JOSE CARLOS MACEDO JUNIOR & CIA LTDA",
+    "CEZAR LUIZ HOOGEVOONINK",
+    "ARENDT E RAMOS REPRESENTACOES COMERCIAIS LTDA",
+    "FREITAS REPRESENTACAO COMERCIAL LTDA",
+    "GILSON CARLOS DALLA COSTA PEREIRA & CIA",
+    "QUEIROZ & QUEIROZ REP COMERCIAIS LTDA",
+    "EXPOMARCAS COMERCIAL EXPORTADORA DE MANUFATURADOS LTDA",
+    "S. SILVA REPRESENTACOES LTDA",
+    "VIDAL REPRESENTACOES LTDA",
+    "ANTONIO CARLOS RAVANELLO 38377870010",
+    "ARV REPRESENTACAO COMERCIAL LTDA",
+    "E. L. BIAVATTI & CIA. LTDA.",
+    "LEANDRO DE SOUZA LTDA",
+    "SANTORO GESTAO E VENDAS LTDA",
+    "ANA JANET ZULIANI 54224055015",
+    "LUCIANO GONCALVES RODRIGUES",
+    "PAIDEIA AGORA COM DE BEB E REP LTDA ME",
+    "VIALE BR EMPREENDIMENTOS LTDA"
+  ];
+
+  function formatCurrency(valor) {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function getResponsavel(vendedor) {
+    if (VENDEDORES_ALEXANDRE.includes(vendedor)) return 'ALEXANDRE';
+    if (VENDEDORES_JUMAHIL.includes(vendedor)) return 'JUMAHIL';
+    return null;
+  }
+
+  let ultimaListaVendedores = []; // [{vendedor, total, resp}]
+  let listaSemVendas = [];       // [{vendedor, resp}]
+  let sortMode = 'valor';        // 'valor' ou 'responsavel'
+
+  function atualizarIndicadoresOrdenacao() {
+    if (sortMode === 'valor') {
+      sortIndicadorV.textContent = '▼';
+      sortIndicadorR.textContent = '-';
+    } else {
+      sortIndicadorV.textContent = '-';
+      sortIndicadorR.textContent = '▼';
+    }
+  }
+
+  function renderTabelaPrincipal() {
+    tbodyVendedores.innerHTML = '';
+
+    if (ultimaListaVendedores.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 3;
+      td.className = 'empty-state';
+      td.textContent = 'Nenhuma linha válida encontrada. Confira R iniciando em "venda", I com vendedor, J com valor e B com status permitido.';
+      tr.appendChild(td);
+      tbodyVendedores.appendChild(tr);
+      return;
+    }
+
+    // Ordena conforme modo atual
+    const dadosOrdenados = [...ultimaListaVendedores];
+
+    if (sortMode === 'valor') {
+      dadosOrdenados.sort((a, b) => b.total - a.total);
+    } else if (sortMode === 'responsavel') {
+      const rankResp = { 'ALEXANDRE': 1, 'JUMAHIL': 2, '': 3 };
+      dadosOrdenados.sort((a, b) => {
+        const ra = rankResp[a.resp || ''] || 99;
+        const rb = rankResp[b.resp || ''] || 99;
+        if (ra !== rb) return ra - rb;
+        return b.total - a.total; // dentro de cada grupo, por valor
+      });
+    }
+
+    dadosOrdenados.forEach(item => {
+      const tr = document.createElement('tr');
+
+      const tdVendedor = document.createElement('td');
+      tdVendedor.textContent = item.vendedor;
+      tdVendedor.className = 'td-vendedor';
+
+      const tdTotal = document.createElement('td');
+      tdTotal.textContent = formatCurrency(item.total);
+      tdTotal.className = 'td-total';
+
+      const tdResp = document.createElement('td');
+      tdResp.className = 'td-resp';
+
+      if (item.resp === 'ALEXANDRE') {
+        tdResp.innerHTML = '<span class="tag-alexandre">ALEXANDRE</span>';
+      } else if (item.resp === 'JUMAHIL') {
+        tdResp.innerHTML = '<span class="tag-jumahil">JUMAHIL</span>';
+      } else {
+        tdResp.textContent = '';
+      }
+
+      tr.appendChild(tdVendedor);
+      tr.appendChild(tdTotal);
+      tr.appendChild(tdResp);
+      tbodyVendedores.appendChild(tr);
+    });
+  }
+
+  function renderTabelaSemVendas() {
+    tbodySemVendas.innerHTML = '';
+
+    if (listaSemVendas.length === 0) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 3;
+      td.className = 'empty-state';
+      td.textContent = 'Nenhum vendedor ALEXANDRE/JUMAHIL zerado dentro da regra atual.';
+      tr.appendChild(td);
+      tbodySemVendas.appendChild(tr);
+      return;
+    }
+
+    // Ordena por responsável (ALEXANDRE, JUMAHIL) e nome
+    const dados = [...listaSemVendas];
+    const rankResp = { 'ALEXANDRE': 1, 'JUMAHIL': 2 };
+    dados.sort((a, b) => {
+      const ra = rankResp[a.resp] || 99;
+      const rb = rankResp[b.resp] || 99;
+      if (ra !== rb) return ra - rb;
+      return a.vendedor.localeCompare(b.vendedor);
+    });
+
+    dados.forEach(item => {
+      const tr = document.createElement('tr');
+
+      const tdV = document.createElement('td');
+      tdV.textContent = item.vendedor;
+
+      const tdR = document.createElement('td');
+      tdR.style.textAlign = 'center';
+      if (item.resp === 'ALEXANDRE') {
+        tdR.innerHTML = '<span class="tag-alexandre">ALEXANDRE</span>';
+      } else if (item.resp === 'JUMAHIL') {
+        tdR.innerHTML = '<span class="tag-jumahil">JUMAHIL</span>';
+      } else {
+        tdR.textContent = item.resp || '';
+      }
+
+      const tdS = document.createElement('td');
+      tdS.textContent = 'Sem vendas na regra atual';
+
+      tr.appendChild(tdV);
+      tr.appendChild(tdR);
+      tr.appendChild(tdS);
+      tbodySemVendas.appendChild(tr);
+    });
+  }
+
+  inputExcel.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      if (!sheet || !sheet['!ref']) {
+        alert('Não foi possível ler a planilha. Confira se há dados na aba 1.');
+        return;
+      }
+
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+
+      const totais = {};
+      let totalGeral = 0;
+      let linhasValidas = 0;
+
+      // Percorre as linhas da planilha, ignorando cabeçalho (começa da segunda linha)
+      for (let r = range.s.r + 1; r <= range.e.r; r++) {
+        const rowNumber = r + 1; // linhas no Excel são 1-based
+
+        const cellVendedor = sheet['I' + rowNumber];  // coluna I = vendedor
+        const cellValor   = sheet['J' + rowNumber];   // coluna J = valor
+        const cellDesc    = sheet['R' + rowNumber];   // coluna R = descrição
+        const cellStatus  = sheet['B' + rowNumber];   // coluna B = status
+
+        // precisa ter descrição, vendedor, valor e status
+        if (!cellDesc || cellDesc.v == null) continue;
+        if (!cellVendedor || cellVendedor.v == null) continue;
+        if (!cellValor || cellValor.v == null) continue;
+        if (!cellStatus || cellStatus.v == null) continue;
+
+        const descricao = String(cellDesc.v).trim().toLowerCase();
+        const statusRaw = String(cellStatus.v).trim().toLowerCase();
+
+        // filtro 1: R começa com "venda"
+        if (!descricao.startsWith('venda')) {
+          continue;
+        }
+
+        // filtro 2: status B dentro da lista
+        if (!STATUS_VALIDOS.includes(statusRaw)) {
+          continue;
+        }
+
+        const vendedor = String(cellVendedor.v).trim();
+        let bruto = cellValor.v;
+
+        // Trata valor:
+        if (typeof bruto === 'string') {
+          let s = bruto.trim();
+          s = s.replace(/\./g, ''); // remove pontos (milhares)
+          s = s.replace(',', '.');  // troca vírgula por ponto
+          bruto = s;
+        }
+
+        const valor = parseFloat(bruto);
+        if (isNaN(valor)) continue;
+
+        if (!totais[vendedor]) {
+          totais[vendedor] = 0;
+        }
+        totais[vendedor] += valor;
+        totalGeral += valor;
+        linhasValidas++;
+      }
+
+      // Atualiza resumo
+      totalGeralEl.textContent = formatCurrency(totalGeral);
+      totalRegistrosEl.textContent = `${linhasValidas} linhas válidas (R "venda..." + status B permitido)`;
+      const vendedores = Object.keys(totais);
+      qtdVendedoresEl.textContent = vendedores.length;
+
+      // Descobre maior vendedor
+      if (vendedores.length > 0) {
+        let melhor = vendedores[0];
+        vendedores.forEach(v => {
+          if (totais[v] > totais[melhor]) melhor = v;
+        });
+        topVendedorEl.textContent = melhor;
+        topVendedorValorEl.textContent = formatCurrency(totais[melhor] || 0);
+      } else {
+        topVendedorEl.textContent = '–';
+        topVendedorValorEl.textContent = 'R$ 0,00';
+      }
+
+      // Monta lista principal com responsavel
+      ultimaListaVendedores = vendedores.map(v => ({
+        vendedor: v,
+        total: totais[v],
+        resp: getResponsavel(v) || ''
+      }));
+
+      // Calcula lista de vendedores sem vendas (ALEXANDRE / JUMAHIL)
+      listaSemVendas = [];
+      const setComVenda = new Set(vendedores);
+
+      VENDEDORES_ALEXANDRE.forEach(nome => {
+        if (!setComVenda.has(nome)) {
+          listaSemVendas.push({ vendedor: nome, resp: 'ALEXANDRE' });
+        }
+      });
+      VENDEDORES_JUMAHIL.forEach(nome => {
+        if (!setComVenda.has(nome)) {
+          listaSemVendas.push({ vendedor: nome, resp: 'JUMAHIL' });
+        }
+      });
+
+      // reset ordenação para valor
+      sortMode = 'valor';
+      atualizarIndicadoresOrdenacao();
+      renderTabelaPrincipal();
+      renderTabelaSemVendas();
+      // mostra seção de sem vendas se já estiver aberta
+      // (não muda estado do display aqui)
     };
 
-    const statusBox = document.getElementById('status');
-    const tipsBox = document.getElementById('tips');
-    function setTips(html){ tipsBox.innerHTML = html; tipsBox.style.display='block'; }
-    function setStatus(msg, cls){
-      statusBox.textContent = msg;
-      statusBox.classList.remove('ok','warn','err');
-      if(cls) statusBox.classList.add(cls);
+    reader.readAsArrayBuffer(file);
+  });
+
+  // Toggle da aba de vendedores sem vendas
+  btnSemVendas.addEventListener('click', () => {
+    if (semVendasWrapper.style.display === 'none' || semVendasWrapper.style.display === '') {
+      semVendasWrapper.style.display = 'block';
+      btnSemVendas.innerHTML = '<span class="icon">⬆️</span> Ocultar vendedores sem vendas';
+      renderTabelaSemVendas();
+    } else {
+      semVendasWrapper.style.display = 'none';
+      btnSemVendas.innerHTML = '<span class="icon">🔍</span> Ver vendedores ALEXANDRE/JUMAHIL sem vendas';
     }
+  });
 
-    let app=null, auth=null, db=null, lastSavedKey=null, allowAutoFocus=true, autoFocusArmed=true;
-    let modoLote=false;
-    const DUP_GUARD_MS = 600;
-    let lastSeq = '', lastSeqAt = 0;
-    const pendentes=[];
+  // Ordenar por valor (padrão) ao clicar em "Vendedor"
+  thVendedor.addEventListener('click', () => {
+    if (ultimaListaVendedores.length === 0) return;
+    sortMode = 'valor';
+    atualizarIndicadoresOrdenacao();
+    renderTabelaPrincipal();
+  });
 
-    async function iniciar(){
-      try{
-        if(!window.firebase || !firebase.initializeApp){
-          setTips('⚠️ Não foi possível carregar o SDK do Firebase. Prefira abrir em http://localhost (Live Server/servidor local).');
-          return setStatus('SDK não carregado', 'err');
-        }
-        setStatus('conectando…', 'warn');
-        app = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db   = firebase.database();
+  // Ordenar por responsável ao clicar em "Responsável"
+  thResponsavel.addEventListener('click', () => {
+    if (ultimaListaVendedores.length === 0) return;
+    sortMode = 'responsavel';
+    atualizarIndicadoresOrdenacao();
+    renderTabelaPrincipal();
+  });
 
-        await auth.signInAnonymously();
-        const user = auth.currentUser;
-        if(!user){
-          setTips('⚠️ Ative Authentication → Método de login → Anônimo (Anonymous).');
-          return setStatus('falha no login anônimo', 'err');
-        }
-        document.getElementById('who').textContent = user.uid;
-        setStatus('conectado ✔', 'ok');
-      }catch(e){
-        const msg  = (e && e.message) || String(e);
-        setTips('⚠️ Erro ao iniciar: ' + msg);
-        setStatus('erro ao iniciar', 'err');
-      }
-    }
+  // Estado inicial da aba de sem vendas
+  semVendasWrapper.style.display = 'none';
+  atualizarIndicadoresOrdenacao();
+</script>
 
-    const LISTA = ['SUDOESTE/REUNIDAS','EUCATUR/TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS'];
-
-    const PASTEL = [
-      {bg:'#E0F2FE', br:'#BAE6FD'},
-      {bg:'#DCFCE7', br:'#BBF7D0'},
-      {bg:'#FAF5FF', br:'#E9D5FF'},
-      {bg:'#FEF9C3', br:'#FDE68A'},
-      {bg:'#FFEDD5', br:'#FED7AA'},
-      {bg:'#FDE68A', br:'#FCD34D'},
-      {bg:'#E9F8F0', br:'#C7F0DE'},
-      {bg:'#F3E8FF', br:'#E9D5FF'},
-      {bg:'#FFE4E6', br:'#FECDD3'},
-      {bg:'#E7E5E4', br:'#D6D3D1'},
-      {bg:'#E0E7FF', br:'#C7D2FE'},
-      {bg:'#F1F5F9', br:'#E2E8F0'}
-    ];
-
-    const codigo = document.getElementById('codigo');
-    const manualSeq = document.getElementById('manualSeq');
-    const btnManual = document.getElementById('btnManual');
-    const resultado = document.getElementById('resultado');
-    const concatSpan = document.getElementById('concat');
-    const timestampSpan = document.getElementById('timestamp');
-    const transportadorasWrap = document.getElementById('transportadorasWrap');
-    const gridTransportadoras = document.getElementById('gridTransportadoras');
-    const okMsg = document.getElementById('okMsg');
-    const registrosDiv = document.getElementById('registros');
-    const btnLimpar = document.getElementById('btnLimpar');
-    const btnSync = document.getElementById('btnSync');
-    const buscaSeq = document.getElementById('buscaSeq');
-    const btnBuscar = document.getElementById('btnBuscar');
-    const searchArea = document.getElementById('searchArea');
-    const btnLote = document.getElementById('btnLote');
-    const btnAbrirTransp = document.getElementById('btnAbrirTransp');
-    const badgePend = document.getElementById('badgePend');
-    const pendentesBox = document.getElementById('pendentesBox');
-    const pendList = document.getElementById('pendList');
-    const btnLimparPend = document.getElementById('btnLimparPend');
-
-    function somenteDigitos(v){ return (v||'').toString().replace(/\D+/g,''); }
-
-    function construirBotoes(){
-      gridTransportadoras.innerHTML = '';
-      LISTA.forEach((nome, idx) => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'chip';
-        b.textContent = nome;
-        b.setAttribute('data-nome', nome);
-        const c = PASTEL[idx % PASTEL.length];
-        b.style.background = c.bg;
-        b.style.borderColor = c.br;
-        b.addEventListener('click', () => selecionarTransportadora(nome));
-        gridTransportadoras.appendChild(b);
-      });
-    }
-
-    function atualizarPendentesUI(){
-      const n = pendentes.length;
-      badgePend.hidden = (n===0);
-      badgePend.textContent = `📦 Pendentes: ${n}`;
-      document.getElementById('qtdPend').textContent = `(${n})`;
-      pendentesBox.hidden = (n===0);
-      btnAbrirTransp.hidden = !(modoLote && n>0);
-
-      pendList.innerHTML = '';
-      for(let i=0;i<pendentes.length;i++){
-        const p = pendentes[i];
-        const tag = document.createElement('div');
-        tag.className = 'tag';
-        tag.innerHTML = `<span>${p.seq}</span> <button data-i="${i}" title="remover">×</button>`;
-        pendList.appendChild(tag);
-      }
-    }
-
-    pendList?.addEventListener('click', (e)=>{
-      const t = e.target;
-      if(t.tagName==='BUTTON' && t.hasAttribute('data-i')){
-        const i = parseInt(t.getAttribute('data-i'),10);
-        if(!isNaN(i)){ pendentes.splice(i,1); atualizarPendentesUI(); }
-      }
-    });
-    btnLimparPend?.addEventListener('click', ()=>{ pendentes.splice(0, pendentes.length); atualizarPendentesUI(); });
-
-    btnAbrirTransp.addEventListener('click', ()=>{
-      construirBotoes();
-      transportadorasWrap.hidden = false;
-      okMsg.style.display = 'block';
-      okMsg.textContent = 'Selecione a transportadora para aplicar ao lote';
-      setTimeout(()=> okMsg.style.display='none', 1400);
-    });
-
-    function extrair(){
-      const digits = somenteDigitos(codigo.value);
-      if(digits.length < 34){
-        if(!modoLote){
-          resultado.hidden = true;
-          transportadorasWrap.hidden = true;
-        }
-        return;
-      }
-      const seq = digits.slice(29,34);
-      const agora = new Date();
-      const dataHora = agora.toLocaleString('pt-BR');
-
-      const now = Date.now();
-      if (modoLote){
-        if (seq === lastSeq && (now - lastSeqAt) < 600){
-          codigo.value = '';
-          autoFocusArmed = true; allowAutoFocus = true; focusLeitor();
-          return;
-        }
-        lastSeq = seq; lastSeqAt = now;
-      }
-
-      concatSpan.textContent = seq;
-      timestampSpan.textContent = dataHora;
-
-      if(modoLote){
-        pendentes.push({ seq, dataHora, uid: (firebase.auth().currentUser?.uid||null), tsLocal: now });
-        atualizarPendentesUI();
-        codigo.value = '';
-        autoFocusArmed = true; allowAutoFocus = true; focusLeitor();
-        transportadorasWrap.hidden = true;
-        return seq;
-      }else{
-        resultado.hidden = false;
-        construirBotoes();
-        transportadorasWrap.hidden = false;
-        allowAutoFocus = false; autoFocusArmed = false;
-        return seq;
-      }
-    }
-
-    // 🔹 FUNÇÃO NOVA: USAR NOTA MANUAL (5 DÍGITOS)
-    function usarManual(){
-      if(!manualSeq) return;
-      const seq = somenteDigitos(manualSeq.value);
-      if(seq.length !== 5){
-        alert('Informe exatamente 5 dígitos para a nota manual.');
-        return;
-      }
-      const agora = new Date();
-      const dataHora = agora.toLocaleString('pt-BR');
-      concatSpan.textContent = seq;
-      timestampSpan.textContent = dataHora;
-      resultado.hidden = false;
-      construirBotoes();
-      transportadorasWrap.hidden = false;
-      allowAutoFocus = false;
-      autoFocusArmed = false;
-      codigo.value = '';
-    }
-
-    function resetForNext(){
-      codigo.value = '';
-      if(manualSeq) manualSeq.value = '';
-      resultado.hidden = true;
-      transportadorasWrap.hidden = true;
-      document.querySelectorAll('.chip.selected').forEach(el=>el.classList.remove('selected'));
-      setTimeout(()=> { autoFocusArmed = true; allowAutoFocus = true; focusLeitor(); }, 10);
-    }
-
-    async function salvarUmRegistro(seq, dataHora, nome){
-      const ref = db.ref('leituras').push();
-      await ref.set({
-        seq, dataHora, transportadora: nome,
-        uid: firebase.auth().currentUser?.uid || null,
-        ts: firebase.database.ServerValue.TIMESTAMP
-      });
-      lastSavedKey = ref.key;
-    }
-
-    async function selecionarTransportadora(nome){
-      if(!db || !firebase.auth().currentUser){
-        setTips('⚠️ Firebase não iniciado. Recarregue a página.');
-        return;
-      }
-
-      if(modoLote && pendentes.length){
-        try{
-          for(const p of pendentes){
-            await salvarUmRegistro(p.seq, p.dataHora, nome);
-          }
-          setStatus(`registradas ${pendentes.length} notas em ${nome}`, 'ok');
-          pendentes.splice(0, pendentes.length);
-          atualizarPendentesUI();
-          resetForNext();
-        }catch(e){
-          setTips('⚠️ Erro ao salvar em lote: ' + e);
-        }
-        return;
-      }
-
-      document.querySelectorAll('.chip.selected').forEach(el=>el.classList.remove('selected'));
-      const btn = Array.from(document.querySelectorAll('.chip')).find(b => b.dataset.nome === nome);
-      if(btn) btn.classList.add('selected');
-
-      okMsg.style.display = 'block';
-      okMsg.textContent = 'Transportadora selecionada: ' + nome;
-      setTimeout(()=> okMsg.style.display='none', 1200);
-
-      const seq = concatSpan.textContent.trim();
-      const dataHora = timestampSpan.textContent.trim();
-      try{
-        await salvarUmRegistro(seq, dataHora, nome);
-        setStatus('conectado ✔', 'ok');
-        resetForNext();
-      }catch(e){
-        setTips('⚠️ Erro ao salvar no Firebase: ' + e);
-      }
-    }
-
-    function inicioDoDiaTS(){ const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); }
-    function fimDoDiaTS(){ const d = new Date(); d.setHours(23,59,59,999); return d.getTime(); }
-
-    function inicioDaSemanaTS(){
-      const d = new Date();
-      const day = d.getDay();
-      const diff = (day === 0 ? 6 : day-1);
-      d.setHours(0,0,0,0);
-      d.setDate(d.getDate() - diff);
-      return d.getTime();
-    }
-    function fimDaSemanaTS(){
-      const d = new Date(inicioDaSemanaTS());
-      d.setDate(d.getDate()+6);
-      d.setHours(23,59,59,999);
-      return d.getTime();
-    }
-    function inicioDoMesTS(){
-      const d = new Date();
-      d.setDate(1);
-      d.setHours(0,0,0,0);
-      return d.getTime();
-    }
-    function fimDoMesTS(){
-      const d = new Date();
-      d.setMonth(d.getMonth()+1, 0);
-      d.setHours(23,59,59,999);
-      return d.getTime();
-    }
-
-    function atualizarResumo(rows){
-      const tHojeI = inicioDoDiaTS(), tHojeF = fimDoDiaTS();
-      const tSemI = inicioDaSemanaTS(), tSemF = fimDaSemanaTS();
-      const tMesI = inicioDoMesTS(), tMesF = fimDoMesTS();
-      const inRange = (ts,i,f)=> typeof ts==='number' && ts>=i && ts<=f;
-
-      const hoje = rows.filter(r => inRange(r.ts, tHojeI, tHojeF)).length;
-      const sem  = rows.filter(r => inRange(r.ts, tSemI, tSemF)).length;
-      const mes  = rows.filter(r => inRange(r.ts, tMesI, tMesF)).length;
-
-      document.getElementById('sumHoje').textContent = String(hoje);
-      document.getElementById('sumSemana').textContent = String(sem);
-      document.getElementById('sumMes').textContent = String(mes);
-    }
-
-    function renderTable(rows, highlightKey){
-      atualizarResumo(rows);
-      rows.sort((a,b)=> (b.ts||0)-(a.ts||0));
-      const ini = inicioDoDiaTS(), fim = fimDoDiaTS();
-      const countHoje = rows.filter(r => typeof r.ts==='number' && r.ts>=ini && r.ts<=fim).length;
-      const span = document.getElementById('countHoje');
-      if(span) span.textContent = countHoje.toString();
-
-      if(!rows.length){
-        registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>';
-        return;
-      }
-      let html = '<table><thead><tr><th>Nota (5 dígitos)</th><th>Data/Hora</th><th>Transportadora</th><th>Ações</th></tr></thead><tbody>';
-      for(const r of rows){
-        const cls = (highlightKey && r._key===highlightKey) ? ' class="hl"' : '';
-        html += `<tr${cls}><td>${r.seq||''}</td><td>${r.dataHora||''}</td><td>${r.transportadora||''}</td>`+
-                `<td><button class="delbtn" data-key="${r._key}">×</button></td></tr>`;
-      }
-      html += '</tbody></table>';
-      registrosDiv.innerHTML = html;
-      if(highlightKey){
-        setTimeout(()=>{ document.querySelectorAll('tr.hl').forEach(tr => tr.classList.remove('hl')); }, 2000);
-      }
-    }
-
-    async function listar(){
-      try{
-        if(!db){ setTips('⚠️ Firebase não iniciado.'); return; }
-        const snap = await db.ref('leituras').limitToLast(1000).get();
-        const val = snap.val();
-        if(!val){
-          document.getElementById('sumHoje').textContent = '0';
-          document.getElementById('sumSemana').textContent = '0';
-          document.getElementById('sumMes').textContent = '0';
-          registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>';
-          return;
-        }
-        const linhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
-        renderTable(linhas, lastSavedKey);
-      }catch(e){ setTips('⚠️ Erro ao listar: ' + e); }
-    }
-
-    async function buscar(){
-      if(!db){ setTips('⚠️ Firebase não iniciado.'); return; }
-      const seq = (buscaSeq.value || '').trim();
-      if(!seq || seq.length !== 5){ alert('Informe exatamente 5 dígitos.'); return; }
-      try{
-        const snap = await db.ref('leituras').orderByChild('seq').equalTo(seq).get();
-        const val = snap.val();
-        if(!val){ registrosDiv.innerHTML = '<div class="empty">Nenhum registro encontrado para a nota '+seq+'.</div>'; return; }
-        const linhas = Object.entries(val).map(([k,v])=> ({...v, _key:k}));
-        renderTable(linhas, null);
-      }catch(e){
-        const msg = (e && e.message) ? e.message : String(e||'');
-        if(msg.includes('indexOn')){
-          setTips('⚠️ Adicione o índice nas Regras do Realtime Database:\n\n{\n  "rules": {\n    "leituras": {\n      ".read": "auth != null",\n      ".write": "auth != null",\n      ".indexOn": ["seq", "ts"]\n    }\n  }\n}');
-          try{
-            const snapAll = await db.ref('leituras').limitToLast(2000).get();
-            const valAll = snapAll.val();
-            if(!valAll){ registrosDiv.innerHTML = '<div class="empty">Sem registros para varrer.</div>'; return; }
-            const todos = Object.entries(valAll).map(([k,v])=> ({...v, _key:k}));
-            const filtrados = todos.filter(r => (r && r.seq) === seq);
-            if(!filtrados.length){ registrosDiv.innerHTML = '<div class="empty">Nenhum registro encontrado (fallback).</div>'; return; }
-            renderTable(filtrados, null);
-          }catch(e2){ setTips('⚠️ Erro na busca (fallback): ' + e2); }
-        }else{
-          setTips('⚠️ Erro na busca: ' + msg);
-        }
-      }
-    }
-
-    async function excluirRegistro(key){
-      if(!db) { setTips('⚠️ Firebase não iniciado.'); return; }
-      if(!key) return;
-      const ok = confirm('Excluir este registro?');
-      if(!ok) return;
-      try{
-        await db.ref('leituras/'+key).remove();
-        await listar();
-      }catch(e){
-        setTips('⚠️ Erro ao excluir: ' + e);
-      }
-    }
-    registrosDiv.addEventListener('click', (ev)=>{
-      const t = ev.target;
-      if(t && t.classList.contains('delbtn')){
-        const key = t.getAttribute('data-key');
-        excluirRegistro(key);
-      }
-    });
-
-    function focusLeitor(){ if(!allowAutoFocus || !autoFocusArmed) return; try{ codigo.focus(); codigo.select?.(); autoFocusArmed=false; }catch(_){} }
-    window.addEventListener('focus', ()=> focusLeitor());
-    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') focusLeitor(); });
-    codigo.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== codigo) focusLeitor(); }, 50));
-    codigo.addEventListener('keydown', (e)=>{
-      const done = (somenteDigitos(codigo.value).length >= 34);
-      if(done && (e.key === 'Enter' || e.key === 'Tab')){
-        e.preventDefault(); e.stopPropagation();
-        return false;
-      }
-    }, true);
-
-    searchArea.addEventListener('pointerdown', ()=>{ allowAutoFocus = false; autoFocusArmed = false; });
-    buscaSeq.addEventListener('focus', ()=>{ allowAutoFocus = false; autoFocusArmed = false; });
-
-    let _scanTimer=null;
-    codigo.addEventListener('input', ()=>{
-      if(_scanTimer) clearTimeout(_scanTimer);
-      _scanTimer = setTimeout(()=>{
-        const digits = somenteDigitos(codigo.value);
-        if(digits.length >= 34){
-          extrair();
-        }
-      }, 60);
-    });
-
-    function atualizarBotaoLote(){
-      btnLote.classList.toggle('on', modoLote);
-      btnLote.textContent = modoLote ? '🟢 Modo Lote: ATIVADO' : '🔘 Modo Lote: DESATIVADO';
-      atualizarPendentesUI();
-    }
-    btnLote.addEventListener('click', ()=>{
-      modoLote = !modoLote;
-      atualizarBotaoLote();
-      if(!modoLote){
-        resultado.hidden = true;
-        transportadorasWrap.hidden = true;
-      }else{
-        atualizarPendentesUI();
-      }
-      autoFocusArmed = true; focusLeitor();
-    });
-    atualizarBotaoLote();
-
-    btnSync.addEventListener('click', listar);
-    btnLimpar.addEventListener('click', ()=>{
-      codigo.value='';
-      if(manualSeq) manualSeq.value='';
-      resultado.hidden = true;
-      transportadorasWrap.hidden = true;
-      registrosDiv.innerHTML = '';
-      allowAutoFocus = true; autoFocusArmed = true; focusLeitor();
-    });
-    btnBuscar.addEventListener('click', buscar);
-    buscaSeq.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); buscar(); }});
-
-    if(btnManual){
-      btnManual.addEventListener('click', usarManual);
-    }
-    if(manualSeq){
-      manualSeq.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter'){
-          e.preventDefault();
-          usarManual();
-        }
-      });
-    }
-
-    window.addEventListener('load', ()=>{ iniciar(); autoFocusArmed = true; focusLeitor(); });
-  </script>
 </body>
 </html>
