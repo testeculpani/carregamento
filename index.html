@@ -172,14 +172,13 @@
       <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
       <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
 
-      <!-- 🔹 NOVO BLOCO: NOTA MANUAL 5 DÍGITOS -->
+      <!-- 🔹 NOTA MANUAL 5 DÍGITOS -->
       <label for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
       <div class="row" id="manualArea">
         <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" style="flex:1" />
         <button class="ghost" id="btnManual">Adicionar manual</button>
       </div>
       <div class="hint">Use esta opção para notas emitidas manualmente, sem chave de 44 dígitos.</div>
-      <!-- 🔹 FIM NOVO BLOCO -->
 
       <div class="out" id="resultado" hidden>
         <div><span class="k">Nota (30º–34º):</span> <span class="v" id="concat"></span></div>
@@ -422,7 +421,7 @@
       }
     }
 
-    // 🔹 FUNÇÃO NOVA: USAR NOTA MANUAL (5 DÍGITOS)
+    // 🔹 NOTA MANUAL (5 DÍGITOS)
     function usarManual(){
       if(!manualSeq) return;
       const seq = somenteDigitos(manualSeq.value);
@@ -641,10 +640,12 @@
     window.addEventListener('focus', ()=> focusLeitor());
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') focusLeitor(); });
     codigo.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== codigo) focusLeitor(); }, 50));
+
+    // 🔒 NÃO DEIXA TAB/ENTER TIRAR O FOCO DO CAMPO DO LEITOR
     codigo.addEventListener('keydown', (e)=>{
-      const done = (somenteDigitos(codigo.value).length >= 34);
-      if(done && (e.key === 'Enter' || e.key === 'Tab')){
-        e.preventDefault(); e.stopPropagation();
+      if(e.key === 'Enter' || e.key === 'Tab'){
+        e.preventDefault();
+        e.stopPropagation();
         return false;
       }
     }, true);
