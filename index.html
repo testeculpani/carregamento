@@ -155,6 +155,41 @@
       font-weight:700;color:#0f172a;
     }
     .summary span{font-weight:800}
+
+    /* Pop-up inicial de instrução */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+    }
+    .modal{
+      background:#ffffff;
+      border-radius:16px;
+      padding:20px 22px;
+      max-width:420px;
+      width:100%;
+      box-shadow:0 20px 50px rgba(15,23,42,.35);
+      border:1px solid var(--border);
+    }
+    .modal h2{
+      margin:0 0 8px 0;
+      font-size:18px;
+      font-weight:800;
+      color:var(--text);
+    }
+    .modal p{
+      margin:0 0 12px 0;
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .modal button{
+      margin-top:8px;
+    }
   </style>
 </head>
 <body>
@@ -180,7 +215,7 @@
       <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
       <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
 
-      <!-- 🔹 NOTA MANUAL 5 DÍGITOS -->
+      <!-- NOTA MANUAL 5 DÍGITOS -->
       <label for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
       <div class="row" id="manualArea">
         <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" style="flex:1" />
@@ -236,6 +271,26 @@
     <div class="footer">Grilazer</div>
   </div>
 
+  <!-- Pop-up de instrução ao abrir o site -->
+  <div class="modal-overlay" id="popupInfo">
+    <div class="modal">
+      <h2>📌 Atenção</h2>
+      <p>
+        Se você apenas vai <strong>rastrear uma nota</strong>, 
+        não precisa mais clicar em <strong>“Sincronizar (listar)”</strong>.
+      </p>
+      <p>
+        Apenas digite o número da nota no campo 
+        <strong>“Buscar pela nota”</strong>.
+      </p>
+      <p>
+        <strong>Lembre-se:</strong> o site precisa estar com o 
+        <strong>Status Conectado</strong> antes de buscar.
+      </p>
+      <button class="primary" id="popupFechar">Entendi</button>
+    </div>
+  </div>
+
   <!-- SDKs Firebase (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -268,6 +323,42 @@
     const DUP_GUARD_MS = 600;
     let lastSeq = '', lastSeqAt = 0;
     const pendentes=[];
+
+    const codigo = document.getElementById('codigo');
+    const manualSeq = document.getElementById('manualSeq');
+    const btnManual = document.getElementById('btnManual');
+    const resultado = document.getElementById('resultado');
+    const concatSpan = document.getElementById('concat');
+    const timestampSpan = document.getElementById('timestamp');
+    const transportadorasWrap = document.getElementById('transportadorasWrap');
+    const gridTransportadoras = document.getElementById('gridTransportadoras');
+    const okMsg = document.getElementById('okMsg');
+    const registrosDiv = document.getElementById('registros');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const btnSync = document.getElementById('btnSync');
+    const buscaSeq = document.getElementById('buscaSeq');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const searchArea = document.getElementById('searchArea');
+    const btnLote = document.getElementById('btnLote');
+    const btnAbrirTransp = document.getElementById('btnAbrirTransp');
+    const badgePend = document.getElementById('badgePend');
+    const pendentesBox = document.getElementById('pendentesBox');
+    const pendList = document.getElementById('pendList');
+    const btnLimparPend = document.getElementById('btnLimparPend');
+
+    const popupInfo = document.getElementById('popupInfo');
+    const popupFechar = document.getElementById('popupFechar');
+
+    function abrirPopup(){
+      if(popupInfo){
+        popupInfo.style.display = 'flex';
+      }
+    }
+    function fecharPopup(){
+      if(popupInfo){
+        popupInfo.style.display = 'none';
+      }
+    }
 
     async function iniciar(){
       try{
@@ -311,28 +402,6 @@
       {bg:'#E0E7FF', br:'#C7D2FE'},
       {bg:'#F1F5F9', br:'#E2E8F0'}
     ];
-
-    const codigo = document.getElementById('codigo');
-    const manualSeq = document.getElementById('manualSeq');
-    const btnManual = document.getElementById('btnManual');
-    const resultado = document.getElementById('resultado');
-    const concatSpan = document.getElementById('concat');
-    const timestampSpan = document.getElementById('timestamp');
-    const transportadorasWrap = document.getElementById('transportadorasWrap');
-    const gridTransportadoras = document.getElementById('gridTransportadoras');
-    const okMsg = document.getElementById('okMsg');
-    const registrosDiv = document.getElementById('registros');
-    const btnLimpar = document.getElementById('btnLimpar');
-    const btnSync = document.getElementById('btnSync');
-    const buscaSeq = document.getElementById('buscaSeq');
-    const btnBuscar = document.getElementById('btnBuscar');
-    const searchArea = document.getElementById('searchArea');
-    const btnLote = document.getElementById('btnLote');
-    const btnAbrirTransp = document.getElementById('btnAbrirTransp');
-    const badgePend = document.getElementById('badgePend');
-    const pendentesBox = document.getElementById('pendentesBox');
-    const pendList = document.getElementById('pendList');
-    const btnLimparPend = document.getElementById('btnLimparPend');
 
     function somenteDigitos(v){ return (v||'').toString().replace(/\D+/g,''); }
 
@@ -402,7 +471,7 @@
 
       const now = Date.now();
       if (modoLote){
-        if (seq === lastSeq && (now - lastSeqAt) < 600){
+        if (seq === lastSeq && (now - lastSeqAt) < DUP_GUARD_MS){
           codigo.value = '';
           autoFocusArmed = true; allowAutoFocus = true; focusLeitor();
           return;
@@ -429,7 +498,7 @@
       }
     }
 
-    // 🔹 NOTA MANUAL (5 DÍGITOS)
+    // NOTA MANUAL (5 DÍGITOS)
     function usarManual(){
       if(!manualSeq) return;
       const seq = somenteDigitos(manualSeq.value);
@@ -644,12 +713,19 @@
       }
     });
 
-    function focusLeitor(){ if(!allowAutoFocus || !autoFocusArmed) return; try{ codigo.focus(); codigo.select?.(); autoFocusArmed=false; }catch(_){} }
+    function focusLeitor(){
+      if(!allowAutoFocus || !autoFocusArmed) return;
+      try{
+        codigo.focus();
+        codigo.select?.();
+        autoFocusArmed=false;
+      }catch(_){}
+    }
     window.addEventListener('focus', ()=> focusLeitor());
     document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') focusLeitor(); });
     codigo.addEventListener('blur', ()=> setTimeout(()=>{ if(document.activeElement !== codigo) focusLeitor(); }, 50));
 
-    // 🔒 NÃO DEIXA TAB/ENTER TIRAR O FOCO DO CAMPO DO LEITOR
+    // NÃO DEIXA TAB/ENTER TIRAR O FOCO DO CAMPO DO LEITOR
     codigo.addEventListener('keydown', (e)=>{
       if(e.key === 'Enter' || e.key === 'Tab'){
         e.preventDefault();
@@ -658,8 +734,38 @@
       }
     }, true);
 
-    searchArea.addEventListener('pointerdown', ()=>{ allowAutoFocus = false; autoFocusArmed = false; });
-    buscaSeq.addEventListener('focus', ()=>{ allowAutoFocus = false; autoFocusArmed = false; });
+    // TRAVA O FOCO NO LEITOR QUANDO MODO LOTE ESTÁ ATIVO
+    document.addEventListener('focusin', (e)=>{
+      if(modoLote && e.target !== codigo){
+        e.stopPropagation();
+        setTimeout(()=> {
+          codigo.focus();
+          codigo.select?.();
+        }, 0);
+      }
+    }, true);
+
+    // Desativa/ativa campos concorrentes quando muda Modo Lote
+    function aplicarTravamentoFoco(){
+      const campos = [manualSeq, buscaSeq];
+      campos.forEach(c=>{
+        if(!c) return;
+        if(modoLote){
+          c.disabled = true;
+          c.setAttribute('tabIndex','-1');
+        }else{
+          c.disabled = false;
+          c.removeAttribute('tabIndex');
+        }
+      });
+    }
+
+    searchArea.addEventListener('pointerdown', ()=>{
+      allowAutoFocus = false; autoFocusArmed = false;
+    });
+    buscaSeq.addEventListener('focus', ()=>{
+      allowAutoFocus = false; autoFocusArmed = false;
+    });
 
     let _scanTimer=null;
     codigo.addEventListener('input', ()=>{
@@ -676,6 +782,7 @@
       btnLote.classList.toggle('on', modoLote);
       btnLote.textContent = modoLote ? '🟢 Modo Lote: ATIVADO' : '🔘 Modo Lote: DESATIVADO';
       atualizarPendentesUI();
+      aplicarTravamentoFoco();
     }
     btnLote.addEventListener('click', ()=>{
       modoLote = !modoLote;
@@ -714,7 +821,23 @@
       });
     }
 
-    window.addEventListener('load', ()=>{ iniciar(); autoFocusArmed = true; focusLeitor(); });
+    if(popupFechar){
+      popupFechar.addEventListener('click', fecharPopup);
+    }
+    if(popupInfo){
+      popupInfo.addEventListener('click', (e)=>{
+        if(e.target === popupInfo){
+          fecharPopup();
+        }
+      });
+    }
+
+    window.addEventListener('load', ()=>{
+      iniciar();
+      autoFocusArmed = true;
+      focusLeitor();
+      abrirPopup(); // mostra a mensagem ao abrir o site
+    });
   </script>
 </body>
 </html>
