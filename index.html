@@ -722,9 +722,9 @@
 
     function focusLeitor(){
       if(!allowAutoFocus || !autoFocusArmed) return;
+      if(document.activeElement === codigo) return;
       try{
         codigo.focus();
-        codigo.select?.();
         autoFocusArmed=false;
       }catch(_){}
     }
@@ -741,13 +741,14 @@
       }
     }, true);
 
-    // TRAVA O FOCO NO LEITOR QUANDO MODO LOTE ESTÁ ATIVO
+    // TRAVA O FOCO NO LEITOR QUANDO MODO LOTE ESTÁ ATIVO (sem select)
     document.addEventListener('focusin', (e)=>{
       if(modoLote && e.target !== codigo){
         e.stopPropagation();
         setTimeout(()=> {
-          codigo.focus();
-          codigo.select?.();
+          if(document.activeElement !== codigo){
+            codigo.focus();
+          }
         }, 0);
       }
     }, true);
