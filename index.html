@@ -4,6 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Carregamento Expedição Grilazer</title>
+
+  <!-- PWA / Ícones -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="icon" type="image/png" href="logocaminhao.png">
+  <link rel="apple-touch-icon" href="logocaminhao.png">
+
   <style>
     :root{
       --bg: #0ea5e9;
@@ -596,15 +603,15 @@
     }
     function inicioDoMesTS(){
       const d = new Date();
-      d.setDate(1);
-      d.setHours(0,0,0,0);
-      return d.getTime();
+      const d2 = new Date(d.getFullYear(), d.getMonth(), 1);
+      d2.setHours(0,0,0,0);
+      return d2.getTime();
     }
     function fimDoMesTS(){
       const d = new Date();
-      d.setMonth(d.getMonth()+1, 0);
-      d.setHours(23,59,59,999);
-      return d.getTime();
+      const d2 = new Date(d.getFullYear(), d.getMonth()+1, 0);
+      d2.setHours(23,59,59,999);
+      return d2.getTime();
     }
 
     function atualizarResumo(rows){
