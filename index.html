@@ -163,6 +163,23 @@
     }
     .summary span{font-weight:800}
 
+    .btnPallet{
+      background:#22c55e;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      padding:10px 14px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:13px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+      transition:.2s;
+      margin-bottom:8px;
+    }
+    .btnPallet:hover{
+      filter:brightness(0.95);
+    }
+
     /* Pop-up inicial de instrução */
     .modal-overlay{
       position:fixed;
@@ -211,6 +228,7 @@
         </div>
       </div>
       <div style="text-align:right">
+        <button class="btnPallet" id="btnPallet">📦 Pallet</button>
         <div class="subtitle">Status</div>
         <div class="status mono warn" id="status">iniciando…</div>
         <div class="subtitle" style="margin-top:6px">📦 Hoje: <span id="countHoje">0</span></div>
@@ -352,6 +370,7 @@
     const pendentesBox = document.getElementById('pendentesBox');
     const pendList = document.getElementById('pendList');
     const btnLimparPend = document.getElementById('btnLimparPend');
+    const btnPallet = document.getElementById('btnPallet');
 
     const popupInfo = document.getElementById('popupInfo');
     const popupFechar = document.getElementById('popupFechar');
@@ -837,6 +856,12 @@
         if(e.target === popupInfo){
           fecharPopup();
         }
+      });
+    }
+
+    if(btnPallet){
+      btnPallet.addEventListener('click', ()=>{
+        window.location.href = 'https://testeculpani.github.io/expedicao/';
       });
     }
 
