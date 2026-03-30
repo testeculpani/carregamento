@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Carregamento Expedição Grilazer • V2</title>
+  <title>Carregamento Expedição Grilazer • Login Seguro</title>
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0b5fff">
@@ -16,7 +16,6 @@
       --bg-2:#0b5fff;
       --bg-3:#0ea5e9;
       --card:#ffffff;
-      --card-soft:rgba(255,255,255,.10);
       --line:#e2e8f0;
       --line-2:#dbe5f1;
       --text:#0f172a;
@@ -26,17 +25,13 @@
       --ok:#16a34a;
       --warn:#f59e0b;
       --danger:#ef4444;
-      --dark:#0b1220;
       --pending:#eff8ff;
       --pending-line:#bfdbfe;
       --shadow:0 18px 50px rgba(2,6,23,.16);
       --shadow-soft:0 8px 22px rgba(15,23,42,.08);
-      --radius:18px;
-      --radius-sm:12px;
     }
 
     *{box-sizing:border-box}
-
     html,body{
       margin:0;
       padding:0;
@@ -48,58 +43,54 @@
         radial-gradient(circle at top left, rgba(59,130,246,.22), transparent 28%),
         linear-gradient(145deg, var(--bg-1), #0d2341 46%, #0f3f8f 100%);
     }
+    body{ padding:18px; }
+    .hidden{display:none !important}
 
-    body{
-      padding:18px;
+    .loginOverlay{
+      min-height:calc(100vh - 36px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
-
-    .app{
-      max-width:1180px;
-      margin:0 auto;
+    .loginShell{
+      width:100%;
+      max-width:1080px;
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:22px;
+      align-items:stretch;
     }
-
-    .hero{
-      position:relative;
-      overflow:hidden;
+    .loginBrand{
       border:1px solid rgba(255,255,255,.12);
       border-radius:28px;
-      padding:20px;
+      padding:28px;
       background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
       backdrop-filter:blur(10px);
       box-shadow:0 24px 60px rgba(0,0,0,.22);
-      margin-bottom:18px;
+      color:#fff;
+      position:relative;
+      overflow:hidden;
     }
-
-    .hero::before{
+    .loginBrand::before{
       content:"";
       position:absolute;
-      inset:auto -80px -80px auto;
-      width:240px;
-      height:240px;
-      background:radial-gradient(circle, rgba(14,165,233,.35), transparent 70%);
+      inset:auto -90px -90px auto;
+      width:260px;
+      height:260px;
+      background:radial-gradient(circle, rgba(14,165,233,.38), transparent 70%);
       pointer-events:none;
     }
-
-    .topbar{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:16px;
-      position:relative;
-      z-index:1;
-    }
-
-    .brand{
+    .brandTop{
       display:flex;
       align-items:center;
       gap:14px;
-      min-width:0;
+      position:relative;
+      z-index:1;
     }
-
     .logo{
-      width:58px;
-      height:58px;
-      border-radius:16px;
+      width:64px;
+      height:64px;
+      border-radius:18px;
       background:rgba(255,255,255,.12);
       border:1px solid rgba(255,255,255,.18);
       display:grid;
@@ -108,175 +99,86 @@
       box-shadow:0 8px 18px rgba(0,0,0,.18);
       flex:0 0 auto;
     }
-
     .logo img{
       width:100%;
       height:100%;
       object-fit:contain;
       display:block;
     }
-
-    .brandText h1{
+    .brandTitle{
       margin:0;
-      color:#fff;
-      font-size:clamp(22px,3vw,31px);
-      line-height:1.05;
+      font-size:clamp(22px,3vw,34px);
+      line-height:1.03;
       letter-spacing:.2px;
     }
-
-    .brandText p{
-      margin:7px 0 0;
+    .brandSub{
+      margin:6px 0 0;
       color:rgba(255,255,255,.78);
       font-size:14px;
     }
-
-    .rightTools{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:12px;
-      min-width:245px;
-    }
-
-    .quickRow{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-
-    .quickBtn{
-      appearance:none;
-      border:none;
-      border-radius:12px;
-      padding:11px 15px;
-      font-weight:800;
-      font-size:13px;
-      cursor:pointer;
-      transition:.2s;
-      box-shadow:0 10px 20px rgba(15,23,42,.18);
-    }
-
-    .quickBtn:hover{ transform:translateY(-1px); }
-    .quickBtn:active{ transform:translateY(0); }
-
-    .btnPallet{
-      background:linear-gradient(135deg, #22c55e, #16a34a);
-      color:#fff;
-    }
-
-    .statusWrap{
-      min-width:245px;
-      width:100%;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:16px;
-      padding:12px;
-      color:#fff;
-      box-shadow:0 10px 26px rgba(0,0,0,.18);
-    }
-
-    .statusLabel{
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.8px;
-      opacity:.82;
-      font-weight:700;
-      margin-bottom:7px;
-    }
-
-    .status{
-      font-size:13px;
-      background:#fff;
-      color:#111827;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      white-space:pre-wrap;
-      font-weight:700;
-    }
-
-    .status.ok{ background:#dcfce7; border-color:#86efac; color:#14532d; }
-    .status.warn{ background:#fef9c3; border-color:#fde047; color:#713f12; }
-    .status.err{ background:#fee2e2; border-color:#fecaca; color:#7f1d1d; }
-
-    .heroStats{
+    .brandIntro{
       position:relative;
       z-index:1;
-      margin-top:18px;
+      margin-top:28px;
+      line-height:1.7;
+      color:rgba(255,255,255,.88);
+      font-size:15px;
+      max-width:560px;
+    }
+    .brandStats{
+      position:relative;
+      z-index:1;
+      margin-top:22px;
       display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
+      grid-template-columns:repeat(3,minmax(0,1fr));
       gap:12px;
     }
-
-    .heroStat{
-      background:rgba(255,255,255,.12);
+    .brandStat{
+      background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.16);
-      border-radius:16px;
-      padding:14px 16px;
-      box-shadow:0 10px 24px rgba(0,0,0,.16);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 12px 26px rgba(0,0,0,.14);
     }
-
-    .heroStat span{
+    .brandStat span{
       display:block;
-      color:rgba(255,255,255,.78);
       font-size:12px;
-      font-weight:700;
-      letter-spacing:.4px;
+      color:rgba(255,255,255,.76);
       text-transform:uppercase;
+      letter-spacing:.5px;
+      font-weight:800;
       margin-bottom:8px;
     }
-
-    .heroStat strong{
-      color:#fff;
-      font-size:26px;
-      line-height:1;
+    .brandStat strong{
+      display:block;
+      font-size:24px;
       font-weight:900;
+      color:#fff;
+      line-height:1;
     }
-
-    .layout{
-      display:grid;
-      grid-template-columns:1.35fr .9fr;
-      gap:18px;
-      align-items:start;
-    }
-
-    .panel{
-      background:var(--card);
+    .loginCard{
+      background:#fff;
       border:1px solid var(--line);
-      border-radius:24px;
+      border-radius:28px;
       box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-
-    .panelHeader{
-      padding:18px 20px 0;
+      padding:28px;
       display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
+      flex-direction:column;
+      justify-content:center;
     }
-
-    .panelTitle{
+    .loginCard h2{
       margin:0;
-      font-size:20px;
-      line-height:1.1;
+      font-size:30px;
+      line-height:1.05;
+      color:#0f172a;
     }
-
-    .panelSub{
-      margin:6px 0 0;
+    .loginCard p{
+      margin:10px 0 0;
       color:var(--muted);
-      font-size:13px;
+      font-size:14px;
+      line-height:1.6;
     }
-
-    .panelBody{
-      padding:20px;
-    }
-
-    .scannerCard{
-      background:linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
-    }
+    .loginFields{ margin-top:22px; display:grid; gap:14px; }
 
     .fieldLabel{
       display:block;
@@ -285,11 +187,7 @@
       color:#0f172a;
       font-size:14px;
     }
-
-    .inputWrap{
-      position:relative;
-    }
-
+    .inputWrap{ position:relative; }
     .inputWrap::before{
       content:"";
       position:absolute;
@@ -314,55 +212,11 @@
       color:#0f172a;
       transition:.15s;
     }
-
     input:focus{
       border-color:#93c5fd;
       box-shadow:0 0 0 4px rgba(59,130,246,.10);
     }
-
     input::placeholder{ color:#94a3b8; }
-
-    .hint{
-      font-size:12px;
-      color:#64748b;
-      margin-top:8px;
-      line-height:1.45;
-    }
-
-    .manualGrid{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:10px;
-    }
-
-    .resultCard{
-      margin-top:18px;
-      background:#0f172a;
-      color:#fff;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.06);
-      padding:16px;
-      font-family:Consolas,Menlo,monospace;
-      box-shadow:0 16px 30px rgba(15,23,42,.20);
-    }
-
-    .resultCard .k{
-      color:#94a3b8;
-      font-size:13px;
-    }
-
-    .resultCard .v{
-      font-size:22px;
-      font-weight:900;
-      word-break:break-word;
-    }
-
-    .actionGrid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:10px;
-      margin-top:16px;
-    }
 
     button{
       appearance:none;
@@ -374,29 +228,259 @@
       transition:transform .04s ease, box-shadow .18s ease, filter .18s ease;
       font-size:14px;
     }
-
     button:active{ transform:translateY(1px); }
     button:hover{ filter:brightness(.98); }
-
-    .ghost{
-      background:#fff;
-      border:1px solid var(--line);
-      color:#0f172a;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .danger{
-      background:linear-gradient(135deg, #ef4444, #dc2626);
-      color:#fff;
-      box-shadow:0 10px 22px rgba(239,68,68,.25);
-    }
 
     .primary{
       background:linear-gradient(135deg, var(--primary), var(--primary-2));
       color:#fff;
       box-shadow:0 10px 22px rgba(37,99,235,.25);
     }
+    .ghost{
+      background:#fff;
+      border:1px solid var(--line);
+      color:#0f172a;
+      box-shadow:var(--shadow-soft);
+    }
+    .danger{
+      background:linear-gradient(135deg, #ef4444, #dc2626);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(239,68,68,.25);
+    }
+    .quickBtn{
+      appearance:none;
+      border:none;
+      border-radius:12px;
+      padding:11px 15px;
+      font-weight:800;
+      font-size:13px;
+      cursor:pointer;
+      transition:.2s;
+      box-shadow:0 10px 20px rgba(15,23,42,.18);
+    }
+    .quickBtn:hover{ transform:translateY(-1px); }
+    .quickBtn:active{ transform:translateY(0); }
+    .btnPallet{
+      background:linear-gradient(135deg, #22c55e, #16a34a);
+      color:#fff;
+    }
+    .loginBtn{
+      width:100%;
+      margin-top:8px;
+      padding:15px 16px;
+      font-size:15px;
+    }
+    .loginMsg{
+      margin-top:14px;
+      min-height:22px;
+      font-size:13px;
+      font-weight:700;
+      color:#7c2d12;
+    }
+    .loginNote{
+      margin-top:14px;
+      border:1px solid #dbeafe;
+      background:#eff6ff;
+      color:#1e3a8a;
+      padding:12px 14px;
+      border-radius:14px;
+      font-size:13px;
+      line-height:1.55;
+    }
 
+    .app{
+      max-width:1180px;
+      margin:0 auto;
+    }
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:28px;
+      padding:20px;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      backdrop-filter:blur(10px);
+      box-shadow:0 24px 60px rgba(0,0,0,.22);
+      margin-bottom:18px;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:auto -80px -80px auto;
+      width:240px;
+      height:240px;
+      background:radial-gradient(circle, rgba(14,165,233,.35), transparent 70%);
+      pointer-events:none;
+    }
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      position:relative;
+      z-index:1;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
+    .brandText h1{
+      margin:0;
+      color:#fff;
+      font-size:clamp(22px,3vw,31px);
+      line-height:1.05;
+      letter-spacing:.2px;
+    }
+    .brandText p{
+      margin:7px 0 0;
+      color:rgba(255,255,255,.78);
+      font-size:14px;
+    }
+    .rightTools{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:12px;
+      min-width:245px;
+    }
+    .quickRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .statusWrap{
+      min-width:245px;
+      width:100%;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:16px;
+      padding:12px;
+      color:#fff;
+      box-shadow:0 10px 26px rgba(0,0,0,.18);
+    }
+    .statusLabel{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      opacity:.82;
+      font-weight:700;
+      margin-bottom:7px;
+    }
+    .status{
+      font-size:13px;
+      background:#fff;
+      color:#111827;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      white-space:pre-wrap;
+      font-weight:700;
+    }
+    .status.ok{ background:#dcfce7; border-color:#86efac; color:#14532d; }
+    .status.warn{ background:#fef9c3; border-color:#fde047; color:#713f12; }
+    .status.err{ background:#fee2e2; border-color:#fecaca; color:#7f1d1d; }
+
+    .heroStats{
+      position:relative;
+      z-index:1;
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    .heroStat{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 10px 24px rgba(0,0,0,.16);
+    }
+    .heroStat span{
+      display:block;
+      color:rgba(255,255,255,.78);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .heroStat strong{
+      color:#fff;
+      font-size:26px;
+      line-height:1;
+      font-weight:900;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:1.35fr .9fr;
+      gap:18px;
+      align-items:start;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panelHeader{
+      padding:18px 20px 0;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .panelTitle{
+      margin:0;
+      font-size:20px;
+      line-height:1.1;
+    }
+    .panelSub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .panelBody{
+      padding:20px;
+    }
+    .scannerCard{
+      background:linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    }
+    .resultCard{
+      margin-top:18px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.06);
+      padding:16px;
+      font-family:Consolas,Menlo,monospace;
+      box-shadow:0 16px 30px rgba(15,23,42,.20);
+    }
+    .resultCard .k{
+      color:#94a3b8;
+      font-size:13px;
+    }
+    .resultCard .v{
+      font-size:22px;
+      font-weight:900;
+      word-break:break-word;
+    }
+    .manualGrid{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+    }
+    .actionGrid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-top:16px;
+    }
     .toggle{
       background:#f8fafc;
       border:1px solid var(--line);
@@ -407,13 +491,11 @@
       gap:8px;
       box-shadow:var(--shadow-soft);
     }
-
     .toggle.on{
       background:#dcfce7;
       border-color:#86efac;
       color:#14532d;
     }
-
     .pill{
       display:inline-flex;
       align-items:center;
@@ -427,7 +509,6 @@
       color:#0f172a;
       box-shadow:var(--shadow-soft);
     }
-
     .pendingBox{
       margin-top:16px;
       background:var(--pending);
@@ -435,7 +516,6 @@
       border-radius:18px;
       padding:14px;
     }
-
     .pendingHead{
       display:flex;
       align-items:center;
@@ -444,18 +524,15 @@
       flex-wrap:wrap;
       margin-bottom:10px;
     }
-
     .pendingHead h4{
       margin:0;
       font-size:15px;
     }
-
     .pend-list{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
     }
-
     .tag{
       display:flex;
       align-items:center;
@@ -468,7 +545,6 @@
       font-size:13px;
       box-shadow:var(--shadow-soft);
     }
-
     .tag button{
       padding:0 7px;
       min-height:auto;
@@ -480,7 +556,6 @@
       line-height:1.7;
       box-shadow:none;
     }
-
     .transportCard{
       margin-top:16px;
       border:1px solid var(--line);
@@ -488,14 +563,12 @@
       padding:14px;
       background:#f8fbff;
     }
-
     .grid{
       margin-top:12px;
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(135px,1fr));
       gap:10px;
     }
-
     .chip{
       border:1px solid var(--line);
       padding:12px 10px;
@@ -509,27 +582,22 @@
       transition:all .2s ease;
       color:#0f172a;
     }
-
     .chip:hover{
       transform:translateY(-1px);
       box-shadow:0 10px 20px rgba(15,23,42,.10);
     }
-
     .chip.selected{
       outline:2px solid #93c5fd;
       outline-offset:1px;
     }
-
     .success{
       margin-top:10px;
       color:#16a34a;
       font-weight:800;
-      display:none
+      display:none;
     }
 
-    .searchCard,
-    .summaryCard,
-    .tableCard{
+    .searchCard,.summaryCard,.tableCard{
       border:1px solid var(--line);
       border-radius:18px;
       background:#fff;
@@ -537,18 +605,15 @@
       padding:16px;
       margin-bottom:14px;
     }
-
     .searchRow{
       display:grid;
       grid-template-columns:1fr auto;
       gap:10px;
     }
-
     .summary{
       display:grid;
       gap:10px;
     }
-
     .summaryItem{
       display:flex;
       align-items:center;
@@ -559,20 +624,17 @@
       background:linear-gradient(180deg,#f8fbff,#ffffff);
       border:1px solid var(--line);
     }
-
     .summaryItem span{
       color:var(--muted);
       font-size:13px;
       font-weight:700;
     }
-
     .summaryItem strong{
       font-size:28px;
       line-height:1;
       color:#0f172a;
       font-weight:900;
     }
-
     .warnBox{
       margin-top:12px;
       background:#fff7ed;
@@ -591,7 +653,6 @@
       background:#fff;
       overflow:hidden;
     }
-
     th,td{
       border-bottom:1px solid var(--line);
       padding:14px 12px;
@@ -599,7 +660,6 @@
       text-align:left;
       vertical-align:middle;
     }
-
     th{
       background:#f8fafc;
       color:#334155;
@@ -609,11 +669,7 @@
       font-weight:900;
       white-space:nowrap;
     }
-
-    tbody tr:hover{
-      background:#f8fbff;
-    }
-
+    tbody tr:hover{ background:#f8fbff; }
     .empty{
       font-size:14px;
       color:#6b7280;
@@ -623,12 +679,10 @@
       border-radius:14px;
       background:#fafcff;
     }
-
     .hl{
       background:#dcfce7 !important;
       transition: background .6s ease;
     }
-
     .delbtn{
       background:#fee2e2;
       border:1px solid #fecaca;
@@ -642,7 +696,6 @@
       white-space:nowrap;
       box-shadow:none;
     }
-
     .footer{
       margin-top:14px;
       color:#dbeafe;
@@ -662,7 +715,6 @@
       padding:18px;
       backdrop-filter:blur(6px);
     }
-
     .modal{
       background:#ffffff;
       border-radius:24px;
@@ -672,269 +724,290 @@
       box-shadow:0 28px 60px rgba(15,23,42,.34);
       border:1px solid var(--line);
     }
-
     .modal h2{
       margin:0 0 10px 0;
       font-size:22px;
       font-weight:900;
       color:var(--text);
     }
-
     .modal p{
       margin:0 0 12px 0;
       font-size:14px;
       color:var(--muted);
       line-height:1.55;
     }
-
     .modal button{
       margin-top:8px;
       width:100%;
     }
 
-    @media (max-width: 1020px){
-      .layout{
-        grid-template-columns:1fr;
-      }
+    @media (max-width: 1080px){
+      .loginShell{ grid-template-columns:1fr; }
     }
-
+    @media (max-width: 1020px){
+      .layout{ grid-template-columns:1fr; }
+    }
     @media (max-width: 760px){
-      body{
-        padding:12px;
-      }
-
-      .hero{
+      body{ padding:12px; }
+      .hero,.loginCard,.loginBrand{
         border-radius:22px;
         padding:16px;
       }
-
       .topbar{
         flex-direction:column;
         align-items:stretch;
       }
-
       .rightTools{
         align-items:stretch;
         min-width:auto;
       }
-
-      .quickRow{
-        justify-content:stretch;
-      }
-
-      .quickBtn{
-        width:100%;
-      }
-
-      .heroStats{
-        grid-template-columns:1fr;
-      }
-
-      .actionGrid{
-        grid-template-columns:1fr 1fr;
-      }
-
-      .manualGrid,
-      .searchRow{
-        grid-template-columns:1fr;
-      }
-
+      .quickRow{ justify-content:stretch; }
+      .quickBtn{ width:100%; }
+      .heroStats,.brandStats{ grid-template-columns:1fr; }
+      .actionGrid{ grid-template-columns:1fr 1fr; }
+      .manualGrid,.searchRow{ grid-template-columns:1fr; }
       th,td{
         font-size:16px;
         padding:12px 10px;
       }
-
-      .panel,
-      .searchCard,
-      .summaryCard,
-      .tableCard{
-        border-radius:18px;
-      }
+      .panel,.searchCard,.summaryCard,.tableCard{ border-radius:18px; }
     }
-
     @media (max-width: 480px){
-      .actionGrid{
-        grid-template-columns:1fr;
-      }
-
-      th,td{
-        font-size:15px;
-      }
-
-      .brandText p{
-        font-size:13px;
-      }
+      .actionGrid{ grid-template-columns:1fr; }
+      th,td{ font-size:15px; }
+      .brandText p,.brandSub{ font-size:13px; }
+      .loginCard h2{ font-size:26px; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <section class="hero">
-      <div class="topbar">
-        <div class="brand">
+  <div id="loginScreen" class="loginOverlay">
+    <div class="loginShell">
+      <div class="loginBrand">
+        <div class="brandTop">
           <div class="logo">
             <img src="logo_grilazer.jpg" alt="Grilazer">
           </div>
-          <div class="brandText">
-            <h1>Carregamento Expedição Grilazer</h1>
-            <p>Painel operacional de leitura, lote, rastreio e controle de embarques</p>
+          <div>
+            <h1 class="brandTitle">Carregamento Expedição Grilazer</h1>
+            <p class="brandSub">Acesso protegido com autenticação por e-mail e senha</p>
           </div>
         </div>
 
-        <div class="rightTools">
-          <div class="quickRow">
-            <button class="quickBtn btnPallet" id="btnPallet">📦 Pallet</button>
-          </div>
+        <div class="brandIntro">
+          Este sistema foi protegido para impedir acesso fácil aos dados do Firebase.
+          Agora, o operador precisa fazer login antes de visualizar leituras, rastreamentos,
+          modo lote e histórico operacional.
+        </div>
 
-          <div class="statusWrap">
-            <div class="statusLabel">Status do sistema</div>
-            <div class="status mono warn" id="status">iniciando…</div>
+        <div class="brandStats">
+          <div class="brandStat">
+            <span>Segurança</span>
+            <strong>Auth</strong>
+          </div>
+          <div class="brandStat">
+            <span>Banco</span>
+            <strong>Firebase</strong>
+          </div>
+          <div class="brandStat">
+            <span>Fluxo</span>
+            <strong>Protegido</strong>
           </div>
         </div>
       </div>
 
-      <div class="heroStats">
-        <div class="heroStat">
-          <span>Hoje</span>
-          <strong id="countHoje">0</strong>
+      <div class="loginCard">
+        <h2>Entrar no sistema</h2>
+        <p>Use o e-mail e a senha cadastrados no Firebase Authentication.</p>
+
+        <div class="loginFields">
+          <div>
+            <label class="fieldLabel" for="loginEmail">E-mail</label>
+            <div class="inputWrap">
+              <input type="email" id="loginEmail" placeholder="seuemail@empresa.com" autocomplete="username" />
+            </div>
+          </div>
+
+          <div>
+            <label class="fieldLabel" for="loginSenha">Senha</label>
+            <div class="inputWrap">
+              <input type="password" id="loginSenha" placeholder="Digite sua senha" autocomplete="current-password" />
+            </div>
+          </div>
+
+          <button class="primary loginBtn" id="btnLogin">Entrar</button>
         </div>
-        <div class="heroStat">
-          <span>Semana</span>
-          <strong id="sumSemanaHero">0</strong>
-        </div>
-        <div class="heroStat">
-          <span>Mês</span>
-          <strong id="sumMesHero">0</strong>
+
+        <div class="loginMsg" id="loginMsg"></div>
+
+        <div class="loginNote">
+          Dica: no Realtime Database, use regras como <b>auth != null</b> para bloquear leitura e gravação sem login.
         </div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section class="layout">
-      <div class="panel scannerCard">
+  <div id="appScreen" class="hidden">
+    <div class="app">
+      <section class="hero">
+        <div class="topbar">
+          <div class="brand">
+            <div class="logo">
+              <img src="logo_grilazer.jpg" alt="Grilazer">
+            </div>
+            <div class="brandText">
+              <h1>Carregamento Expedição Grilazer</h1>
+              <p>Painel operacional de leitura, lote, rastreio e controle de embarques</p>
+            </div>
+          </div>
+
+          <div class="rightTools">
+            <div class="quickRow">
+              <button class="quickBtn btnPallet" id="btnPallet">📦 Pallet</button>
+              <button class="quickBtn danger" id="btnLogout">Sair</button>
+            </div>
+
+            <div class="statusWrap">
+              <div class="statusLabel">Status do sistema</div>
+              <div class="status mono warn" id="status">iniciando…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="heroStats">
+          <div class="heroStat">
+            <span>Hoje</span>
+            <strong id="countHoje">0</strong>
+          </div>
+          <div class="heroStat">
+            <span>Semana</span>
+            <strong id="sumSemanaHero">0</strong>
+          </div>
+          <div class="heroStat">
+            <span>Mês</span>
+            <strong id="sumMesHero">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="layout">
+        <div class="panel scannerCard">
+          <div class="panelHeader">
+            <div>
+              <h2 class="panelTitle">Leitura e Conferência</h2>
+              <p class="panelSub">Área principal para leitor, nota manual, lote e seleção de transportadora</p>
+            </div>
+            <span class="pill" id="badgePend" hidden>📦 Pendentes: 0</span>
+          </div>
+
+          <div class="panelBody">
+            <label class="fieldLabel" for="codigo">Cole ou leia o código da NF-e</label>
+            <div class="inputWrap">
+              <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
+            </div>
+            <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
+
+            <div style="height:16px"></div>
+
+            <label class="fieldLabel" for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
+            <div class="manualGrid" id="manualArea">
+              <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" />
+              <button class="ghost" id="btnManual">Adicionar manual</button>
+            </div>
+            <div class="hint">Use esta opção para notas emitidas manualmente, sem chave de 44 dígitos.</div>
+
+            <div class="resultCard" id="resultado" hidden>
+              <div style="margin-bottom:10px;">
+                <span class="k">Nota (30º–34º)</span><br>
+                <span class="v" id="concat"></span>
+              </div>
+              <div style="margin-bottom:8px;">
+                <span class="k">Lido em</span><br>
+                <span class="v" id="timestamp" style="font-size:16px;"></span>
+              </div>
+              <div>
+                <span class="k">UID</span><br>
+                <span class="v" id="who" style="font-size:14px;">—</span>
+              </div>
+            </div>
+
+            <div class="actionGrid">
+              <button class="ghost" id="btnSync">Sincronizar (listar)</button>
+              <button class="danger" id="btnLimpar">Limpar tela</button>
+              <button class="toggle" id="btnLote" title="Ativa/desativa o modo de notas em lote">🔘 Modo Lote: DESATIVADO</button>
+              <button class="primary" id="btnAbrirTransp" hidden>Transportadoras</button>
+            </div>
+
+            <div id="pendentesBox" class="pendingBox" hidden>
+              <div class="pendingHead">
+                <h4>📦 Notas pendentes <small id="qtdPend">(0)</small></h4>
+                <button class="ghost" id="btnLimparPend" title="Limpar todas as pendentes">Limpar lista</button>
+              </div>
+              <div class="pend-list" id="pendList"></div>
+              <div class="hint">Dica: com o <b>Modo Lote ATIVADO</b>, bipadas entram aqui. Clique em <b>Transportadoras</b> e escolha uma para aplicar a todas.</div>
+            </div>
+
+            <div id="transportadorasWrap" class="transportCard" hidden>
+              <div class="fieldLabel" style="margin-bottom:0">Selecione a transportadora</div>
+              <div class="grid" id="gridTransportadoras"></div>
+              <div class="success" id="okMsg">Transportadora selecionada!</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="searchCard">
+            <div class="panelTitle" style="font-size:18px;">Rastrear por Nota</div>
+            <p class="panelSub" style="margin-bottom:14px;">Busca direta sem precisar listar tudo</p>
+            <div class="searchRow" id="searchArea">
+              <input id="buscaSeq" placeholder="Buscar pela nota (5 dígitos)" maxlength="5" />
+              <button class="ghost" id="btnBuscar" title="Buscar por 5 dígitos">Buscar</button>
+            </div>
+          </div>
+
+          <div class="summaryCard">
+            <div class="panelTitle" style="font-size:18px; margin-bottom:12px;">Resumo Operacional</div>
+            <div class="summary" id="resumo">
+              <div class="summaryItem">
+                <span>📅 Hoje</span>
+                <strong id="sumHoje">0</strong>
+              </div>
+              <div class="summaryItem">
+                <span>📆 Semana</span>
+                <strong id="sumSemana">0</strong>
+              </div>
+              <div class="summaryItem">
+                <span>🗓️ Mês</span>
+                <strong id="sumMes">0</strong>
+              </div>
+            </div>
+            <div class="warnBox" id="tips" style="display:none"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel tableCard" style="margin-top:18px;">
         <div class="panelHeader">
           <div>
-            <h2 class="panelTitle">Leitura e Conferência</h2>
-            <p class="panelSub">Área principal para leitor, nota manual, lote e seleção de transportadora</p>
-          </div>
-          <span class="pill" id="badgePend" hidden>📦 Pendentes: 0</span>
-        </div>
-
-        <div class="panelBody">
-          <label class="fieldLabel" for="codigo">Cole ou leia o código da NF-e</label>
-          <div class="inputWrap">
-            <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
-          </div>
-          <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
-
-          <div style="height:16px"></div>
-
-          <label class="fieldLabel" for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
-          <div class="manualGrid" id="manualArea">
-            <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" />
-            <button class="ghost" id="btnManual">Adicionar manual</button>
-          </div>
-          <div class="hint">Use esta opção para notas emitidas manualmente, sem chave de 44 dígitos.</div>
-
-          <div class="resultCard" id="resultado" hidden>
-            <div style="margin-bottom:10px;">
-              <span class="k">Nota (30º–34º)</span><br>
-              <span class="v" id="concat"></span>
-            </div>
-            <div style="margin-bottom:8px;">
-              <span class="k">Lido em</span><br>
-              <span class="v" id="timestamp" style="font-size:16px;"></span>
-            </div>
-            <div>
-              <span class="k">UID</span><br>
-              <span class="v" id="who" style="font-size:14px;">—</span>
-            </div>
-          </div>
-
-          <div class="actionGrid">
-            <button class="ghost" id="btnSync">Sincronizar (listar)</button>
-            <button class="danger" id="btnLimpar">Limpar tela</button>
-            <button class="toggle" id="btnLote" title="Ativa/desativa o modo de notas em lote">🔘 Modo Lote: DESATIVADO</button>
-            <button class="primary" id="btnAbrirTransp" hidden>Transportadoras</button>
-          </div>
-
-          <div id="pendentesBox" class="pendingBox" hidden>
-            <div class="pendingHead">
-              <h4>📦 Notas pendentes <small id="qtdPend">(0)</small></h4>
-              <button class="ghost" id="btnLimparPend" title="Limpar todas as pendentes">Limpar lista</button>
-            </div>
-            <div class="pend-list" id="pendList"></div>
-            <div class="hint">Dica: com o <b>Modo Lote ATIVADO</b>, bipadas entram aqui. Clique em <b>Transportadoras</b> e escolha uma para aplicar a todas.</div>
-          </div>
-
-          <div id="transportadorasWrap" class="transportCard" hidden>
-            <div class="fieldLabel" style="margin-bottom:0">Selecione a transportadora</div>
-            <div class="grid" id="gridTransportadoras"></div>
-            <div class="success" id="okMsg">Transportadora selecionada!</div>
+            <h2 class="panelTitle">Registros Recentes</h2>
+            <p class="panelSub">Últimas leituras sincronizadas no Firebase</p>
           </div>
         </div>
-      </div>
-
-      <div>
-        <div class="searchCard">
-          <div class="panelTitle" style="font-size:18px;">Rastrear por Nota</div>
-          <p class="panelSub" style="margin-bottom:14px;">Busca direta sem precisar listar tudo</p>
-          <div class="searchRow" id="searchArea">
-            <input id="buscaSeq" placeholder="Buscar pela nota (5 dígitos)" maxlength="5" />
-            <button class="ghost" id="btnBuscar" title="Buscar por 5 dígitos">Buscar</button>
-          </div>
+        <div class="panelBody" style="padding-top:16px;">
+          <div id="registros"></div>
         </div>
+      </section>
 
-        <div class="summaryCard">
-          <div class="panelTitle" style="font-size:18px; margin-bottom:12px;">Resumo Operacional</div>
-          <div class="summary" id="resumo">
-            <div class="summaryItem">
-              <span>📅 Hoje</span>
-              <strong id="sumHoje">0</strong>
-            </div>
-            <div class="summaryItem">
-              <span>📆 Semana</span>
-              <strong id="sumSemana">0</strong>
-            </div>
-            <div class="summaryItem">
-              <span>🗓️ Mês</span>
-              <strong id="sumMes">0</strong>
-            </div>
-          </div>
-          <div class="warnBox" id="tips" style="display:none"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel tableCard" style="margin-top:18px;">
-      <div class="panelHeader">
-        <div>
-          <h2 class="panelTitle">Registros Recentes</h2>
-          <p class="panelSub">Últimas leituras sincronizadas no Firebase</p>
-        </div>
-      </div>
-      <div class="panelBody" style="padding-top:16px;">
-        <div id="registros"></div>
-      </div>
-    </section>
-
-    <div class="footer">Grilazer • Painel V2 de Expedição</div>
+      <div class="footer">Grilazer • Painel Seguro de Expedição</div>
+    </div>
   </div>
 
   <div class="modal-overlay" id="popupInfo">
     <div class="modal">
       <h2>📌 Atenção</h2>
-      <p>
-        Se você apenas vai <strong>rastrear uma nota</strong>,
-        não precisa mais clicar em <strong>“Sincronizar (listar)”</strong>.
-      </p>
-      <p>
-        Apenas digite o número da nota no campo
-        <strong>“Buscar pela nota”</strong>.
-      </p>
-      <p>
-        <strong>Lembre-se:</strong> o site precisa estar com o
-        <strong>Status Conectado</strong> antes de buscar.
-      </p>
+      <p>Se você apenas vai <strong>rastrear uma nota</strong>, não precisa mais clicar em <strong>“Sincronizar (listar)”</strong>.</p>
+      <p>Apenas digite o número da nota no campo <strong>“Buscar pela nota”</strong>.</p>
+      <p><strong>Lembre-se:</strong> o site precisa estar com o <strong>Status Conectado</strong> antes de buscar.</p>
       <button class="primary" id="popupFechar">Entendi</button>
     </div>
   </div>
@@ -955,25 +1028,17 @@
       measurementId: "G-11T29VHSEB"
     };
 
+    const loginScreen = document.getElementById('loginScreen');
+    const appScreen = document.getElementById('appScreen');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginSenha = document.getElementById('loginSenha');
+    const btnLogin = document.getElementById('btnLogin');
+    const loginMsg = document.getElementById('loginMsg');
+
     const statusBox = document.getElementById('status');
     const tipsBox = document.getElementById('tips');
-
-    function setTips(html){
-      tipsBox.innerHTML = html;
-      tipsBox.style.display = 'block';
-    }
-
-    function setStatus(msg, cls){
-      statusBox.textContent = msg;
-      statusBox.classList.remove('ok','warn','err');
-      if(cls) statusBox.classList.add(cls);
-    }
-
-    let app = null, auth = null, db = null, lastSavedKey = null, allowAutoFocus = true, autoFocusArmed = true;
-    let modoLote = false;
-    const DUP_GUARD_MS = 600;
-    let lastSeq = '', lastSeqAt = 0;
-    const pendentes = [];
+    const popupInfo = document.getElementById('popupInfo');
+    const popupFechar = document.getElementById('popupFechar');
 
     const codigo = document.getElementById('codigo');
     const manualSeq = document.getElementById('manualSeq');
@@ -996,47 +1061,60 @@
     const pendentesBox = document.getElementById('pendentesBox');
     const pendList = document.getElementById('pendList');
     const btnLimparPend = document.getElementById('btnLimparPend');
-    const popupInfo = document.getElementById('popupInfo');
-    const popupFechar = document.getElementById('popupFechar');
     const btnPallet = document.getElementById('btnPallet');
+    const btnLogout = document.getElementById('btnLogout');
     const sumSemanaHero = document.getElementById('sumSemanaHero');
     const sumMesHero = document.getElementById('sumMesHero');
 
+    let app = null, auth = null, db = null, lastSavedKey = null, allowAutoFocus = true, autoFocusArmed = true;
+    let modoLote = false;
+    const DUP_GUARD_MS = 600;
+    let lastSeq = '', lastSeqAt = 0;
+    const pendentes = [];
+    let firebaseReady = false;
+
+    function setTips(html){
+      tipsBox.innerHTML = html;
+      tipsBox.style.display = 'block';
+    }
+    function clearTips(){
+      tipsBox.innerHTML = '';
+      tipsBox.style.display = 'none';
+    }
+    function setStatus(msg, cls){
+      statusBox.textContent = msg;
+      statusBox.classList.remove('ok','warn','err');
+      if(cls) statusBox.classList.add(cls);
+    }
     function abrirPopup(){
       if(popupInfo) popupInfo.style.display = 'flex';
     }
-
     function fecharPopup(){
       if(popupInfo) popupInfo.style.display = 'none';
     }
+    function mostrarLogin(msg=''){
+      loginScreen.classList.remove('hidden');
+      appScreen.classList.add('hidden');
+      loginMsg.textContent = msg;
+    }
+    function mostrarApp(){
+      loginScreen.classList.add('hidden');
+      appScreen.classList.remove('hidden');
+    }
 
-    async function iniciar(){
-      try{
-        if(!window.firebase || !firebase.initializeApp){
-          setTips('⚠️ Não foi possível carregar o SDK do Firebase. Prefira abrir em http://localhost (Live Server/servidor local).');
-          return setStatus('SDK não carregado', 'err');
-        }
-
-        setStatus('conectando…', 'warn');
-        app = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-        db = firebase.database();
-
-        await auth.signInAnonymously();
-        const user = auth.currentUser;
-
-        if(!user){
-          setTips('⚠️ Ative Authentication → Método de login → Anônimo (Anonymous).');
-          return setStatus('falha no login anônimo', 'err');
-        }
-
-        document.getElementById('who').textContent = user.uid;
-        setStatus('conectado ✔', 'ok');
-      }catch(e){
-        const msg = (e && e.message) || String(e);
-        setTips('⚠️ Erro ao iniciar: ' + msg);
-        setStatus('erro ao iniciar', 'err');
+    async function iniciarFirebase(){
+      if(firebaseReady) return;
+      if(!window.firebase || !firebase.initializeApp){
+        throw new Error('Não foi possível carregar o SDK do Firebase.');
       }
+      app = firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.database();
+      firebaseReady = true;
+    }
+
+    function somenteDigitos(v){
+      return (v || '').toString().replace(/\D+/g,'');
     }
 
     const LISTA = ['SUDOESTE/ REUNIDAS','EUCATUR/BAUER /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS'];
@@ -1055,10 +1133,6 @@
       {bg:'#E0E7FF', br:'#C7D2FE'},
       {bg:'#F1F5F9', br:'#E2E8F0'}
     ];
-
-    function somenteDigitos(v){
-      return (v || '').toString().replace(/\D+/g,'');
-    }
 
     function construirBotoes(){
       gridTransportadoras.innerHTML = '';
@@ -1094,29 +1168,72 @@
       }
     }
 
-    pendList?.addEventListener('click', (e) => {
-      const t = e.target;
-      if(t.tagName === 'BUTTON' && t.hasAttribute('data-i')){
-        const i = parseInt(t.getAttribute('data-i'),10);
-        if(!isNaN(i)){
-          pendentes.splice(i,1);
-          atualizarPendentesUI();
-        }
-      }
-    });
+    function abrirSistemaParaUsuario(user){
+      mostrarApp();
+      document.getElementById('who').textContent = user.uid;
+      setStatus('conectado ✔', 'ok');
+      clearTips();
+      loginMsg.textContent = '';
+      autoFocusArmed = true;
+      allowAutoFocus = true;
+      focusLeitor();
+      abrirPopup();
+      listar();
+    }
 
-    btnLimparPend?.addEventListener('click', () => {
+    function fecharSistema(){
+      mostrarLogin('Faça login para acessar o sistema.');
+      setStatus('não autenticado', 'warn');
+      registrosDiv.innerHTML = '';
+      resultado.hidden = true;
+      transportadorasWrap.hidden = true;
       pendentes.splice(0, pendentes.length);
       atualizarPendentesUI();
-    });
+      atualizarResumo([]);
+      codigo.value = '';
+      manualSeq.value = '';
+      buscaSeq.value = '';
+    }
 
-    btnAbrirTransp.addEventListener('click', () => {
-      construirBotoes();
-      transportadorasWrap.hidden = false;
-      okMsg.style.display = 'block';
-      okMsg.textContent = 'Selecione a transportadora para aplicar ao lote';
-      setTimeout(() => okMsg.style.display = 'none', 1400);
-    });
+    async function prepararAutenticacao(){
+      try{
+        await iniciarFirebase();
+        auth.onAuthStateChanged((user) => {
+          if(user){
+            abrirSistemaParaUsuario(user);
+          }else{
+            fecharSistema();
+          }
+        });
+      }catch(err){
+        mostrarLogin('Erro ao iniciar o sistema.');
+        loginMsg.textContent = err.message || String(err);
+      }
+    }
+
+    async function fazerLogin(){
+      const email = loginEmail.value.trim();
+      const senha = loginSenha.value.trim();
+      if(!email || !senha){
+        loginMsg.textContent = 'Preencha e-mail e senha.';
+        return;
+      }
+      try{
+        loginMsg.textContent = 'Entrando...';
+        await auth.signInWithEmailAndPassword(email, senha);
+        loginMsg.textContent = '';
+      }catch(err){
+        loginMsg.textContent = 'Erro no login: ' + (err.message || String(err));
+      }
+    }
+
+    async function fazerLogout(){
+      try{
+        await auth.signOut();
+      }catch(err){
+        setTips('⚠️ Erro ao sair: ' + (err.message || String(err)));
+      }
+    }
 
     function extrair(){
       const digits = somenteDigitos(codigo.value);
@@ -1149,7 +1266,7 @@
       timestampSpan.textContent = dataHora;
 
       if(modoLote){
-        pendentes.push({ seq, dataHora, uid: (firebase.auth().currentUser?.uid || null), tsLocal: now });
+        pendentes.push({ seq, dataHora, uid: (auth.currentUser?.uid || null), tsLocal: now });
         atualizarPendentesUI();
         codigo.value = '';
         autoFocusArmed = true;
@@ -1168,7 +1285,6 @@
     }
 
     function usarManual(){
-      if(!manualSeq) return;
       const seq = somenteDigitos(manualSeq.value);
       if(seq.length !== 5){
         alert('Informe exatamente 5 dígitos para a nota manual.');
@@ -1189,7 +1305,7 @@
 
     function resetForNext(){
       codigo.value = '';
-      if(manualSeq) manualSeq.value = '';
+      manualSeq.value = '';
       resultado.hidden = true;
       transportadorasWrap.hidden = true;
       document.querySelectorAll('.chip.selected').forEach(el => el.classList.remove('selected'));
@@ -1206,15 +1322,15 @@
         seq,
         dataHora,
         transportadora: nome,
-        uid: firebase.auth().currentUser?.uid || null,
+        uid: auth.currentUser?.uid || null,
         ts: firebase.database.ServerValue.TIMESTAMP
       });
       lastSavedKey = ref.key;
     }
 
     async function selecionarTransportadora(nome){
-      if(!db || !firebase.auth().currentUser){
-        setTips('⚠️ Firebase não iniciado. Recarregue a página.');
+      if(!db || !auth.currentUser){
+        setTips('⚠️ Usuário não autenticado.');
         return;
       }
 
@@ -1257,13 +1373,11 @@
       d.setHours(0,0,0,0);
       return d.getTime();
     }
-
     function fimDoDiaTS(){
       const d = new Date();
       d.setHours(23,59,59,999);
       return d.getTime();
     }
-
     function inicioDaSemanaTS(){
       const d = new Date();
       const day = d.getDay();
@@ -1272,21 +1386,18 @@
       d.setDate(d.getDate() - diff);
       return d.getTime();
     }
-
     function fimDaSemanaTS(){
       const d = new Date(inicioDaSemanaTS());
       d.setDate(d.getDate() + 6);
       d.setHours(23,59,59,999);
       return d.getTime();
     }
-
     function inicioDoMesTS(){
       const d = new Date();
       const d2 = new Date(d.getFullYear(), d.getMonth(), 1);
       d2.setHours(0,0,0,0);
       return d2.getTime();
     }
-
     function fimDoMesTS(){
       const d = new Date();
       const d2 = new Date(d.getFullYear(), d.getMonth() + 1, 0);
@@ -1338,8 +1449,8 @@
 
     async function listar(){
       try{
-        if(!db){
-          setTips('⚠️ Firebase não iniciado.');
+        if(!db || !auth.currentUser){
+          setTips('⚠️ Usuário não autenticado.');
           return;
         }
 
@@ -1360,8 +1471,8 @@
     }
 
     async function buscar(){
-      if(!db){
-        setTips('⚠️ Firebase não iniciado.');
+      if(!db || !auth.currentUser){
+        setTips('⚠️ Usuário não autenticado.');
         return;
       }
 
@@ -1410,8 +1521,8 @@
     }
 
     async function excluirRegistro(key){
-      if(!db){
-        setTips('⚠️ Firebase não iniciado.');
+      if(!db || !auth.currentUser){
+        setTips('⚠️ Usuário não autenticado.');
         return;
       }
       if(!key) return;
@@ -1446,11 +1557,11 @@
 
     window.addEventListener('focus', () => focusLeitor());
     document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible') focusLeitor();
+      if(document.visibilityState === 'visible' && !appScreen.classList.contains('hidden')) focusLeitor();
     });
 
     codigo.addEventListener('blur', () => setTimeout(() => {
-      if(document.activeElement !== codigo) focusLeitor();
+      if(document.activeElement !== codigo && !appScreen.classList.contains('hidden')) focusLeitor();
     }, 50));
 
     codigo.addEventListener('keydown', (e) => {
@@ -1462,7 +1573,7 @@
     }, true);
 
     document.addEventListener('focusin', (e) => {
-      if(modoLote && e.target !== codigo){
+      if(modoLote && !appScreen.classList.contains('hidden') && e.target !== codigo){
         e.stopPropagation();
         setTimeout(() => {
           if(document.activeElement !== codigo){
@@ -1533,10 +1644,11 @@
 
     btnLimpar.addEventListener('click', () => {
       codigo.value = '';
-      if(manualSeq) manualSeq.value = '';
+      manualSeq.value = '';
       resultado.hidden = true;
       transportadorasWrap.hidden = true;
       registrosDiv.innerHTML = '';
+      clearTips();
       allowAutoFocus = true;
       autoFocusArmed = true;
       focusLeitor();
@@ -1550,43 +1662,60 @@
       }
     });
 
-    if(btnManual){
-      btnManual.addEventListener('click', usarManual);
-    }
+    btnManual.addEventListener('click', usarManual);
+    manualSeq.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        usarManual();
+      }
+    });
 
-    if(manualSeq){
-      manualSeq.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter'){
-          e.preventDefault();
-          usarManual();
+    pendList.addEventListener('click', (e) => {
+      const t = e.target;
+      if(t.tagName === 'BUTTON' && t.hasAttribute('data-i')){
+        const i = parseInt(t.getAttribute('data-i'),10);
+        if(!isNaN(i)){
+          pendentes.splice(i,1);
+          atualizarPendentesUI();
         }
-      });
-    }
+      }
+    });
 
-    if(popupFechar){
-      popupFechar.addEventListener('click', fecharPopup);
-    }
+    btnLimparPend.addEventListener('click', () => {
+      pendentes.splice(0, pendentes.length);
+      atualizarPendentesUI();
+    });
 
-    if(popupInfo){
-      popupInfo.addEventListener('click', (e) => {
-        if(e.target === popupInfo){
-          fecharPopup();
-        }
-      });
-    }
+    btnAbrirTransp.addEventListener('click', () => {
+      construirBotoes();
+      transportadorasWrap.hidden = false;
+      okMsg.style.display = 'block';
+      okMsg.textContent = 'Selecione a transportadora para aplicar ao lote';
+      setTimeout(() => okMsg.style.display = 'none', 1400);
+    });
 
-    if(btnPallet){
-      btnPallet.addEventListener('click', () => {
-        window.location.href = 'https://testeculpani.github.io/expedicao/';
-      });
-    }
+    popupFechar.addEventListener('click', fecharPopup);
+    popupInfo.addEventListener('click', (e) => {
+      if(e.target === popupInfo) fecharPopup();
+    });
 
-    window.addEventListener('load', () => {
-      iniciar();
-      autoFocusArmed = true;
-      focusLeitor();
-      abrirPopup();
+    btnPallet.addEventListener('click', () => {
+      window.location.href = 'https://testeculpani.github.io/expedicao/';
+    });
+
+    btnLogout.addEventListener('click', fazerLogout);
+
+    btnLogin.addEventListener('click', fazerLogin);
+    loginSenha.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        fazerLogin();
+      }
+    });
+
+    window.addEventListener('load', async () => {
       atualizarResumo([]);
+      await prepararAutenticacao();
     });
   </script>
 </body>
