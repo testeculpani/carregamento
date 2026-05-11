@@ -849,6 +849,7 @@
           <div class="rightTools">
             <div class="quickRow">
               <button class="quickBtn btnPallet" id="btnPallet">📦 Pallet</button>
+              <button class="quickBtn" id="btnLogiFlow" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;">🚚 Logi Flow</button>
               <button class="quickBtn danger" id="btnLogout">Sair</button>
             </div>
 
@@ -1047,6 +1048,7 @@
     const pendList = document.getElementById('pendList');
     const btnLimparPend = document.getElementById('btnLimparPend');
     const btnPallet = document.getElementById('btnPallet');
+    const btnLogiFlow = document.getElementById('btnLogiFlow');
     const btnLogout = document.getElementById('btnLogout');
     const sumSemanaHero = document.getElementById('sumSemanaHero');
     const sumMesHero = document.getElementById('sumMesHero');
@@ -1102,7 +1104,7 @@
       return (v || '').toString().replace(/\D+/g,'');
     }
 
-    const LISTA = ['SUDOESTE/ REUNIDAS','EUCATUR/BAUER /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','ATUAL CARGAS / AGSUL TRANSP. / VIAÇÃO CRUZEIRO','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS'];
+    const LISTA = ['SUDOESTE/ REUNIDAS','EUCATUR/BAUER /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS','ATUAL CARGAS'];
 
     const PASTEL = [
       {bg:'#E0F2FE', br:'#BAE6FD'},
@@ -1686,6 +1688,10 @@
 
     btnPallet.addEventListener('click', () => {
       window.location.href = 'https://testeculpani.github.io/expedicao/';
+    });
+
+    btnLogiFlow.addEventListener('click', () => {
+      window.location.href = 'https://aspiring-logi-flow-link.base44.app/';
     });
 
     btnLogout.addEventListener('click', fazerLogout);
