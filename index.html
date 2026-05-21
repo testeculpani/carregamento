@@ -976,7 +976,7 @@
         <div class="panelHeader">
           <div>
             <h2 class="panelTitle">Registros Recentes</h2>
-            <p class="panelSub">Últimas leituras sincronizadas no Firebase</p>
+            <p class="panelSub">Últimas 30 leituras sincronizadas no Firebase</p>
           </div>
         </div>
         <div class="panelBody" style="padding-top:16px;">
@@ -1410,17 +1410,18 @@
       if(sumMesHero) sumMesHero.textContent = String(mes);
     }
 
-    function renderTable(rows, highlightKey){
-      atualizarResumo(rows);
-      rows.sort((a,b) => (b.ts || 0) - (a.ts || 0));
+    function renderTable(rows, highlightKey, resumoRows = rows){
+      atualizarResumo(resumoRows);
 
-      if(!rows.length){
+      const linhasTabela = [...rows].sort((a,b) => (b.ts || 0) - (a.ts || 0));
+
+      if(!linhasTabela.length){
         registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>';
         return;
       }
 
       let html = '<table><thead><tr><th>Nota (5 dígitos)</th><th>Data/Hora</th><th>Transportadora</th><th>Ações</th></tr></thead><tbody>';
-      for(const r of rows){
+      for(const r of linhasTabela){
         const cls = (highlightKey && r._key === highlightKey) ? ' class="hl"' : '';
         html += `<tr${cls}><td>${r.seq || ''}</td><td>${r.dataHora || ''}</td><td>${r.transportadora || ''}</td><td><button class="delbtn" data-key="${r._key}">×</button></td></tr>`;
       }
@@ -1441,6 +1442,8 @@
           return;
         }
 
+        // Busca até 1000 registros apenas para manter o resumo Hoje/Semana/Mês.
+        // Na tabela, mostra somente as últimas 30 leituras para a página não ficar pesada.
         const snap = await db.ref('leituras').limitToLast(1000).get();
         const val = snap.val();
 
@@ -1450,8 +1453,12 @@
           return;
         }
 
-        const linhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
-        renderTable(linhas, lastSavedKey);
+        const todasLinhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
+        const ultimas30 = [...todasLinhas]
+          .sort((a,b) => (b.ts || 0) - (a.ts || 0))
+          .slice(0, 30);
+
+        renderTable(ultimas30, lastSavedKey, todasLinhas);
       }catch(e){
         setTips('⚠️ Erro ao listar: ' + e);
       }
