@@ -976,7 +976,7 @@
         <div class="panelHeader">
           <div>
             <h2 class="panelTitle">Registros Recentes</h2>
-            <p class="panelSub">Últimas 30 leituras sincronizadas no Firebase</p>
+            <p class="panelSub">Últimas 50 leituras sincronizadas no Firebase</p>
           </div>
         </div>
         <div class="panelBody" style="padding-top:16px;">
@@ -1443,7 +1443,7 @@
         }
 
         // Busca até 1000 registros apenas para manter o resumo Hoje/Semana/Mês.
-        // Na tabela, mostra somente as últimas 30 leituras para a página não ficar pesada.
+        // Na tabela, mostra somente as últimas 50 leituras para a página não ficar pesada.
         const snap = await db.ref('leituras').limitToLast(1000).get();
         const val = snap.val();
 
@@ -1454,11 +1454,11 @@
         }
 
         const todasLinhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
-        const ultimas30 = [...todasLinhas]
+        const ultimas50 = [...todasLinhas]
           .sort((a,b) => (b.ts || 0) - (a.ts || 0))
-          .slice(0, 30);
+          .slice(0, 50);
 
-        renderTable(ultimas30, lastSavedKey, todasLinhas);
+        renderTable(ultimas50, lastSavedKey, todasLinhas);
       }catch(e){
         setTips('⚠️ Erro ao listar: ' + e);
       }
