@@ -850,6 +850,7 @@
             <div class="quickRow">
               <button class="quickBtn btnPallet" id="btnPallet">📦 Pallet</button>
               <button class="quickBtn" id="btnLogiFlow" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;">🚚 Percas</button>
+              <button class="quickBtn" id="btnDevolucoes" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">↩️ Devoluções</button>
               <button class="quickBtn danger" id="btnLogout">Sair</button>
             </div>
 
@@ -976,7 +977,7 @@
         <div class="panelHeader">
           <div>
             <h2 class="panelTitle">Registros Recentes</h2>
-            <p class="panelSub">Últimas 50 leituras sincronizadas no Firebase</p>
+            <p class="panelSub">Últimas 100 leituras sincronizadas no Firebase</p>
           </div>
         </div>
         <div class="panelBody" style="padding-top:16px;">
@@ -1049,6 +1050,7 @@
     const btnLimparPend = document.getElementById('btnLimparPend');
     const btnPallet = document.getElementById('btnPallet');
     const btnLogiFlow = document.getElementById('btnLogiFlow');
+    const btnDevolucoes = document.getElementById('btnDevolucoes');
     const btnLogout = document.getElementById('btnLogout');
     const sumSemanaHero = document.getElementById('sumSemanaHero');
     const sumMesHero = document.getElementById('sumMesHero');
@@ -1104,7 +1106,7 @@
       return (v || '').toString().replace(/\D+/g,'');
     }
 
-    const LISTA = ['SUDOESTE/VIAÇÃO CRUZEIRO/REUNIDAS','EUCATUR/ LOGBG /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS','ATUAL CARGAS / AGSUL TRANSP. / VIAÇÃO CRUZEIRO'];
+    const LISTA = ['SUDOESTE/ REUNIDAS','EUCATUR/ LOGBG /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS','ATUAL CARGAS / AGSUL TRANSP. / VIAÇÃO CRUZEIRO'];
 
     const PASTEL = [
       {bg:'#E0F2FE', br:'#BAE6FD'},
@@ -1443,7 +1445,7 @@
         }
 
         // Busca até 1000 registros apenas para manter o resumo Hoje/Semana/Mês.
-        // Na tabela, mostra somente as últimas 50 leituras para a página não ficar pesada.
+        // Na tabela, mostra somente as últimas 100 leituras para a página não ficar pesada.
         const snap = await db.ref('leituras').limitToLast(1000).get();
         const val = snap.val();
 
@@ -1454,11 +1456,11 @@
         }
 
         const todasLinhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
-        const ultimas50 = [...todasLinhas]
+        const ultimas100 = [...todasLinhas]
           .sort((a,b) => (b.ts || 0) - (a.ts || 0))
-          .slice(0, 50);
+          .slice(0, 100);
 
-        renderTable(ultimas50, lastSavedKey, todasLinhas);
+        renderTable(ultimas100, lastSavedKey, todasLinhas);
       }catch(e){
         setTips('⚠️ Erro ao listar: ' + e);
       }
@@ -1699,6 +1701,10 @@
 
     btnLogiFlow.addEventListener('click', () => {
       window.location.href = 'https://aspiring-logi-flow-link.base44.app/';
+    });
+
+    btnDevolucoes.addEventListener('click', () => {
+      setTips('↩️ Botão DEVOLUÇÕES criado. Falta configurar o link de destino.');
     });
 
     btnLogout.addEventListener('click', fazerLogout);
