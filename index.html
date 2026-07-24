@@ -1016,6 +1016,132 @@
       .brandText p,.brandSub{ font-size:13px; }
       .loginCard h2{ font-size:26px; }
     }
+
+
+    /* Escolha de setor após o login */
+    .perfilOverlay{
+      min-height:calc(100vh - 36px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .perfilCard{
+      width:100%;
+      max-width:820px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      text-align:center;
+    }
+    .perfilLogo{
+      width:72px;
+      height:72px;
+      margin:0 auto 16px;
+      border-radius:20px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-soft);
+      background:#fff;
+    }
+    .perfilLogo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+    }
+    .perfilCard h2{
+      margin:0;
+      font-size:30px;
+      color:#0f172a;
+    }
+    .perfilCard > p{
+      margin:10px auto 0;
+      max-width:620px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+    .perfilGrid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin-top:24px;
+    }
+    .perfilOpcao{
+      min-height:176px;
+      padding:22px;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#f8fbff,#fff);
+      color:#0f172a;
+      text-align:left;
+      box-shadow:var(--shadow-soft);
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:center;
+      gap:9px;
+    }
+    .perfilOpcao:hover{
+      transform:translateY(-2px);
+      box-shadow:0 16px 34px rgba(15,23,42,.12);
+    }
+    .perfilOpcao.expedicao{
+      border-color:#bbf7d0;
+      background:linear-gradient(180deg,#ecfdf5,#fff);
+    }
+    .perfilOpcao.comercial{
+      border-color:#bfdbfe;
+      background:linear-gradient(180deg,#eff6ff,#fff);
+    }
+    .perfilIcone{font-size:34px;line-height:1}
+    .perfilNome{font-size:21px;font-weight:900}
+    .perfilDescricao{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+      font-weight:600;
+    }
+    .perfilSair{
+      margin-top:18px;
+      background:#fff;
+      border:1px solid var(--line);
+      color:#475569;
+      box-shadow:var(--shadow-soft);
+    }
+
+    /* O Comercial visualiza apenas busca e registros recentes */
+    body.modo-comercial .scannerCard,
+    body.modo-comercial .summaryCard,
+    body.modo-comercial .heroStats,
+    body.modo-comercial #btnPallet,
+    body.modo-comercial #btnLogiFlow,
+    body.modo-comercial #btnDevolucoes,
+    body.modo-comercial #btnGerenciarTransportadoras{
+      display:none !important;
+    }
+    body.modo-comercial .layout{
+      grid-template-columns:1fr;
+    }
+    body.modo-comercial .layout > div:last-child{
+      width:100%;
+      max-width:820px;
+      margin:0 auto;
+    }
+    body.modo-comercial .searchCard{
+      margin-bottom:0;
+    }
+
+    @media (max-width:700px){
+      .perfilCard{padding:20px;border-radius:22px}
+      .perfilGrid{grid-template-columns:1fr}
+      .perfilOpcao{min-height:145px}
+      .perfilCard h2{font-size:25px}
+    }
+
   </style>
 </head>
 <body>
@@ -1070,6 +1196,33 @@
     </div>
   </div>
 
+
+  <div id="perfilScreen" class="perfilOverlay hidden">
+    <div class="perfilCard">
+      <div class="perfilLogo">
+        <img src="logo_grilazer.jpg" alt="Grilazer">
+      </div>
+      <h2>Escolha o setor</h2>
+      <p>Selecione como deseja acessar o sistema. A Expedição terá acesso completo; o Comercial poderá somente rastrear notas e consultar os registros recentes.</p>
+
+      <div class="perfilGrid">
+        <button type="button" class="perfilOpcao expedicao" id="btnPerfilExpedicao">
+          <span class="perfilIcone">📦</span>
+          <span class="perfilNome">Expedição</span>
+          <span class="perfilDescricao">Leitor de NF-e, modo lote, transportadoras, resumo, rastreamento e registros.</span>
+        </button>
+
+        <button type="button" class="perfilOpcao comercial" id="btnPerfilComercial">
+          <span class="perfilIcone">🔎</span>
+          <span class="perfilNome">Comercial</span>
+          <span class="perfilDescricao">Somente rastreamento por nota e visualização dos registros recentes.</span>
+        </button>
+      </div>
+
+      <button type="button" class="perfilSair" id="btnPerfilSair">Sair da conta</button>
+    </div>
+  </div>
+
   <div id="appScreen" class="hidden">
     <div class="app">
       <section class="hero">
@@ -1079,8 +1232,8 @@
               <img src="logo_grilazer.jpg" alt="Grilazer">
             </div>
             <div class="brandText">
-              <h1>Carregamento Expedição Grilazer</h1>
-              <p>Painel operacional de leitura, lote, rastreio e controle de embarques</p>
+              <h1 id="appTitulo">Carregamento Expedição Grilazer</h1>
+              <p id="appSubtitulo">Painel operacional de leitura, lote, rastreio e controle de embarques</p>
             </div>
           </div>
 
@@ -1305,7 +1458,13 @@
     };
 
     const loginScreen = document.getElementById('loginScreen');
+    const perfilScreen = document.getElementById('perfilScreen');
     const appScreen = document.getElementById('appScreen');
+    const btnPerfilExpedicao = document.getElementById('btnPerfilExpedicao');
+    const btnPerfilComercial = document.getElementById('btnPerfilComercial');
+    const btnPerfilSair = document.getElementById('btnPerfilSair');
+    const appTitulo = document.getElementById('appTitulo');
+    const appSubtitulo = document.getElementById('appSubtitulo');
     const loginEmail = document.getElementById('loginEmail');
     const loginSenha = document.getElementById('loginSenha');
     const btnLogin = document.getElementById('btnLogin');
@@ -1366,6 +1525,8 @@
     let transportadoraEditandoId = null;
     let transportadorasRef = null;
     let transportadorasCallback = null;
+    let usuarioLogado = null;
+    let setorAtual = null;
 
     function setTips(html){
       tipsBox.innerHTML = html;
@@ -1386,13 +1547,26 @@
     function fecharPopup(){
       if(popupInfo) popupInfo.style.display = 'none';
     }
+    function limparModoSetor(){
+      setorAtual = null;
+      document.body.classList.remove('modo-expedicao', 'modo-comercial');
+    }
     function mostrarLogin(msg=''){
+      limparModoSetor();
       loginScreen.classList.remove('hidden');
+      perfilScreen.classList.add('hidden');
       appScreen.classList.add('hidden');
       loginMsg.textContent = msg;
     }
+    function mostrarEscolhaSetor(){
+      limparModoSetor();
+      loginScreen.classList.add('hidden');
+      perfilScreen.classList.remove('hidden');
+      appScreen.classList.add('hidden');
+    }
     function mostrarApp(){
       loginScreen.classList.add('hidden');
+      perfilScreen.classList.add('hidden');
       appScreen.classList.remove('hidden');
     }
 
@@ -1799,20 +1973,55 @@
     }
 
     function abrirSistemaParaUsuario(user){
-      mostrarApp();
+      usuarioLogado = user;
       document.getElementById('who').textContent = user.uid;
       setStatus('conectado ✔', 'ok');
       clearTips();
       loginMsg.textContent = '';
-      autoFocusArmed = true;
-      allowAutoFocus = true;
-      focusLeitor();
-      abrirPopup();
+      allowAutoFocus = false;
+      autoFocusArmed = false;
+      fecharPopup();
+      mostrarEscolhaSetor();
+    }
+
+    function escolherSetor(setor){
+      if(!auth?.currentUser) return;
+
+      setorAtual = setor;
+      document.body.classList.remove('modo-expedicao', 'modo-comercial');
+      document.body.classList.add(setor === 'comercial' ? 'modo-comercial' : 'modo-expedicao');
+      mostrarApp();
+      setStatus('conectado ✔', 'ok');
+      clearTips();
+
+      if(setor === 'comercial'){
+        appTitulo.textContent = 'Consulta Comercial';
+        appSubtitulo.textContent = 'Rastreamento de notas e consulta dos registros recentes';
+        pararListenerTransportadoras();
+        fecharGerenciadorTransportadoras(false);
+        modoLote = false;
+        atualizarBotaoLote();
+        allowAutoFocus = false;
+        autoFocusArmed = false;
+        fecharPopup();
+        listar();
+        setTimeout(() => buscaSeq.focus(), 120);
+        return;
+      }
+
+      appTitulo.textContent = 'Carregamento Expedição Grilazer';
+      appSubtitulo.textContent = 'Painel operacional de leitura, lote, rastreio e controle de embarques';
       iniciarTransportadoras();
       listar();
+      allowAutoFocus = true;
+      autoFocusArmed = true;
+      setTimeout(() => focusLeitor(), 100);
+      abrirPopup();
     }
 
     function fecharSistema(){
+      usuarioLogado = null;
+      limparModoSetor();
       pararListenerTransportadoras();
       transportadoras = [];
       construirBotoes();
@@ -2209,11 +2418,11 @@
 
     window.addEventListener('focus', () => focusLeitor());
     document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible' && !appScreen.classList.contains('hidden')) focusLeitor();
+      if(document.visibilityState === 'visible' && setorAtual === 'expedicao' && !appScreen.classList.contains('hidden')) focusLeitor();
     });
 
     codigo.addEventListener('blur', () => setTimeout(() => {
-      if(document.activeElement !== codigo && !appScreen.classList.contains('hidden')) focusLeitor();
+      if(setorAtual === 'expedicao' && document.activeElement !== codigo && !appScreen.classList.contains('hidden')) focusLeitor();
     }, 50));
 
     codigo.addEventListener('keydown', (e) => {
@@ -2390,10 +2599,13 @@
     });
 
     btnDevolucoes.addEventListener('click', () => {
-      window.location.href = 'https://testeculpani.github.io/devolucoes/';
+      setTips('↩️ Botão DEVOLUÇÕES criado. Falta configurar o link de destino.');
     });
 
     btnLogout.addEventListener('click', fazerLogout);
+    btnPerfilExpedicao.addEventListener('click', () => escolherSetor('expedicao'));
+    btnPerfilComercial.addEventListener('click', () => escolherSetor('comercial'));
+    btnPerfilSair.addEventListener('click', fazerLogout);
 
     btnLogin.addEventListener('click', fazerLogin);
     loginSenha.addEventListener('keydown', (e) => {
