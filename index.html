@@ -1119,7 +1119,6 @@
     body.modo-comercial .heroStats,
     body.modo-comercial #btnPallet,
     body.modo-comercial #btnLogiFlow,
-    body.modo-comercial #btnDevolucoes,
     body.modo-comercial #btnGerenciarTransportadoras{
       display:none !important;
     }
@@ -1133,6 +1132,13 @@
     }
     body.modo-comercial .searchCard{
       margin-bottom:0;
+    }
+
+    .comercialOnly{
+      display:none !important;
+    }
+    body.modo-comercial .comercialOnly{
+      display:block !important;
     }
 
     @media (max-width:700px){
@@ -1345,6 +1351,9 @@
               <input id="buscaSeq" placeholder="Buscar pela nota (5 dígitos)" maxlength="5" />
               <button class="ghost" id="btnBuscar" title="Buscar por 5 dígitos">Buscar</button>
             </div>
+            <button class="ghost comercialOnly" id="btnSyncComercial" style="width:100%;margin-top:10px;">
+              🔄 Sincronizar (listar)
+            </button>
           </div>
 
           <div class="summaryCard">
@@ -1487,6 +1496,7 @@
     const registrosDiv = document.getElementById('registros');
     const btnLimpar = document.getElementById('btnLimpar');
     const btnSync = document.getElementById('btnSync');
+    const btnSyncComercial = document.getElementById('btnSyncComercial');
     const buscaSeq = document.getElementById('buscaSeq');
     const btnBuscar = document.getElementById('btnBuscar');
     const searchArea = document.getElementById('searchArea');
@@ -2503,6 +2513,7 @@
     atualizarBotaoLote();
 
     btnSync.addEventListener('click', listar);
+    btnSyncComercial.addEventListener('click', listar);
 
     btnLimpar.addEventListener('click', () => {
       codigo.value = '';
