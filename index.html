@@ -741,8 +741,243 @@
       width:100%;
     }
 
+    .transportManagerBtn{
+      background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+      color:#fff;
+    }
+    .transportModal{
+      max-width:940px;
+      padding:0;
+      overflow:hidden;
+    }
+    .transportManagerHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      padding:20px 22px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#f8fbff,#fff);
+    }
+    .transportManagerHead h2{
+      margin:0;
+      font-size:22px;
+      color:var(--text);
+    }
+    .transportManagerHead p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .modalClose{
+      width:40px;
+      height:40px;
+      padding:0;
+      flex:0 0 auto;
+      border-radius:12px;
+      background:#fff;
+      color:#334155;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-soft);
+      font-size:22px;
+      line-height:1;
+    }
+    .transportManagerBody{
+      display:grid;
+      grid-template-columns:.82fr 1.18fr;
+      gap:16px;
+      padding:20px 22px 22px;
+      max-height:78vh;
+      overflow:auto;
+    }
+    .transportFormCard,
+    .transportListCard{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:#fff;
+      box-shadow:var(--shadow-soft);
+    }
+    .transportFormCard h3,
+    .transportListCard h3{
+      margin:0 0 6px;
+      font-size:17px;
+    }
+    .transportFormCard p,
+    .transportListCard p{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .transportFormActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .transportFormActions button{
+      flex:1;
+      min-width:125px;
+    }
+    .transportMsg{
+      display:none;
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      font-weight:800;
+      line-height:1.45;
+    }
+    .transportMsg.ok{
+      display:block;
+      background:#dcfce7;
+      border:1px solid #86efac;
+      color:#14532d;
+    }
+    .transportMsg.err{
+      display:block;
+      background:#fee2e2;
+      border:1px solid #fecaca;
+      color:#7f1d1d;
+    }
+    .transportMsg.warn{
+      display:block;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#7c2d12;
+    }
+    .transportListTools{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+      margin-bottom:12px;
+    }
+    .transportCount{
+      white-space:nowrap;
+      font-size:12px;
+      font-weight:900;
+      color:#475569;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:9px 11px;
+    }
+    .transportCadastroLista{
+      display:grid;
+      gap:9px;
+      max-height:430px;
+      overflow:auto;
+      padding-right:3px;
+    }
+    .transportCadastroItem{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+      align-items:center;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+    .transportCadastroItem.inativo{
+      opacity:.66;
+      background:#f8fafc;
+    }
+    .transportCadastroNome{
+      min-width:0;
+      font-weight:900;
+      color:#0f172a;
+      overflow-wrap:anywhere;
+    }
+    .transportCadastroMeta{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      margin-top:6px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:700;
+    }
+    .statusMini{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .statusMini.ativo{
+      color:#14532d;
+      background:#dcfce7;
+      border:1px solid #86efac;
+    }
+    .statusMini.inativo{
+      color:#475569;
+      background:#f1f5f9;
+      border:1px solid #cbd5e1;
+    }
+    .transportCadastroAcoes{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+    .miniAction{
+      padding:8px 9px;
+      border-radius:10px;
+      font-size:11px;
+      box-shadow:none;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#0f172a;
+    }
+    .miniAction.edit{
+      background:#eff6ff;
+      border-color:#bfdbfe;
+      color:#1e40af;
+    }
+    .miniAction.toggleOff{
+      background:#f8fafc;
+      border-color:#cbd5e1;
+      color:#334155;
+    }
+    .miniAction.toggleOn{
+      background:#dcfce7;
+      border-color:#86efac;
+      color:#14532d;
+    }
+    .miniAction.delete{
+      background:#fee2e2;
+      border-color:#fecaca;
+      color:#7f1d1d;
+    }
+    .transportSelectHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .transportEmpty{
+      padding:18px;
+      text-align:center;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:#fff;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+
     @media (max-width: 1080px){
       .loginShell{ grid-template-columns:1fr; }
+      .transportManagerBody{ grid-template-columns:1fr; }
     }
     @media (max-width: 1020px){
       .layout{ grid-template-columns:1fr; }
@@ -766,6 +1001,9 @@
       .heroStats,.brandStats{ grid-template-columns:1fr; }
       .actionGrid{ grid-template-columns:1fr 1fr; }
       .manualGrid,.searchRow{ grid-template-columns:1fr; }
+      .transportListTools{ grid-template-columns:1fr; }
+      .transportCadastroItem{ grid-template-columns:1fr; }
+      .transportCadastroAcoes{ justify-content:flex-start; }
       th,td{
         font-size:16px;
         padding:12px 10px;
@@ -851,6 +1089,7 @@
               <button class="quickBtn btnPallet" id="btnPallet">📦 Pallet</button>
               <button class="quickBtn" id="btnLogiFlow" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;">🚚 Percas</button>
               <button class="quickBtn" id="btnDevolucoes" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">↩️ Devoluções</button>
+              <button class="quickBtn transportManagerBtn" id="btnGerenciarTransportadoras">🚚 Transportadoras</button>
               <button class="quickBtn danger" id="btnLogout">Sair</button>
             </div>
 
@@ -935,7 +1174,10 @@
             </div>
 
             <div id="transportadorasWrap" class="transportCard" hidden>
-              <div class="fieldLabel" style="margin-bottom:0">Selecione a transportadora</div>
+              <div class="transportSelectHead">
+                <div class="fieldLabel" style="margin-bottom:0">Selecione a transportadora</div>
+                <button class="ghost" id="btnGerenciarTransportadorasInterno" type="button" style="padding:9px 11px;font-size:12px;">⚙️ Cadastrar/editar</button>
+              </div>
               <div class="grid" id="gridTransportadoras"></div>
               <div class="success" id="okMsg">Transportadora selecionada!</div>
             </div>
@@ -999,6 +1241,53 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modalTransportadoras">
+    <div class="modal transportModal">
+      <div class="transportManagerHead">
+        <div>
+          <h2>🚚 Cadastro de Transportadoras</h2>
+          <p>Cadastre, altere, desative ou exclua transportadoras sem editar o código do site.</p>
+        </div>
+        <button class="modalClose" id="btnFecharTransportadoras" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <div class="transportManagerBody">
+        <div class="transportFormCard">
+          <h3 id="tituloFormTransportadora">Nova transportadora</h3>
+          <p>O nome ficará disponível imediatamente nos botões de seleção do carregamento.</p>
+
+          <label class="fieldLabel" for="transportadoraNome">Nome da transportadora</label>
+          <div class="inputWrap">
+            <input id="transportadoraNome" maxlength="80" autocomplete="off" placeholder="Ex.: ATUAL CARGAS" />
+          </div>
+
+          <div class="transportFormActions">
+            <button class="primary" id="btnSalvarTransportadora" type="button">Cadastrar</button>
+            <button class="ghost" id="btnCancelarEdicaoTransportadora" type="button" hidden>Cancelar edição</button>
+          </div>
+
+          <div class="transportMsg" id="transportadoraMsg"></div>
+
+          <div class="loginNote" style="margin-top:14px;">
+            Alterar ou excluir uma transportadora não modifica as leituras antigas. O histórico mantém o nome que foi gravado na data do carregamento.
+          </div>
+        </div>
+
+        <div class="transportListCard">
+          <h3>Transportadoras cadastradas</h3>
+          <p>Somente as transportadoras ativas aparecem para seleção durante o carregamento.</p>
+
+          <div class="transportListTools">
+            <input id="buscaTransportadoraCadastro" autocomplete="off" placeholder="Pesquisar transportadora..." />
+            <span class="transportCount" id="qtdTransportadorasCadastro">0 cadastradas</span>
+          </div>
+
+          <div class="transportCadastroLista" id="listaTransportadorasCadastro"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -1051,6 +1340,18 @@
     const btnPallet = document.getElementById('btnPallet');
     const btnLogiFlow = document.getElementById('btnLogiFlow');
     const btnDevolucoes = document.getElementById('btnDevolucoes');
+    const btnGerenciarTransportadoras = document.getElementById('btnGerenciarTransportadoras');
+    const btnGerenciarTransportadorasInterno = document.getElementById('btnGerenciarTransportadorasInterno');
+    const modalTransportadoras = document.getElementById('modalTransportadoras');
+    const btnFecharTransportadoras = document.getElementById('btnFecharTransportadoras');
+    const transportadoraNome = document.getElementById('transportadoraNome');
+    const btnSalvarTransportadora = document.getElementById('btnSalvarTransportadora');
+    const btnCancelarEdicaoTransportadora = document.getElementById('btnCancelarEdicaoTransportadora');
+    const tituloFormTransportadora = document.getElementById('tituloFormTransportadora');
+    const transportadoraMsg = document.getElementById('transportadoraMsg');
+    const buscaTransportadoraCadastro = document.getElementById('buscaTransportadoraCadastro');
+    const qtdTransportadorasCadastro = document.getElementById('qtdTransportadorasCadastro');
+    const listaTransportadorasCadastro = document.getElementById('listaTransportadorasCadastro');
     const btnLogout = document.getElementById('btnLogout');
     const sumSemanaHero = document.getElementById('sumSemanaHero');
     const sumMesHero = document.getElementById('sumMesHero');
@@ -1061,6 +1362,10 @@
     let lastSeq = '', lastSeqAt = 0;
     const pendentes = [];
     let firebaseReady = false;
+    let transportadoras = [];
+    let transportadoraEditandoId = null;
+    let transportadorasRef = null;
+    let transportadorasCallback = null;
 
     function setTips(html){
       tipsBox.innerHTML = html;
@@ -1106,7 +1411,21 @@
       return (v || '').toString().replace(/\D+/g,'');
     }
 
-    const LISTA = ['SUDOESTE/ REUNIDAS','EUCATUR/ LOGBG /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS','ATUAL CARGAS / AGSUL TRANSP. / VIAÇÃO CRUZEIRO'];
+    const DEFAULT_TRANSPORTADORAS = [
+      'SUDOESTE/ REUNIDAS',
+      'EUCATUR/ LOGBG /TRANSGOSS',
+      'SIM / MOBILI / TW',
+      'EXPRESSO SÃO MIGUEL',
+      'RODONAVES',
+      'INTRACARGO',
+      'ENTREGA GRILAZER',
+      'COLETA PRÓPRIA',
+      'TNT',
+      'ALFA TRANSPORTES',
+      'GAAM',
+      'CORREIOS',
+      'ATUAL CARGAS / AGSUL TRANSP. / VIAÇÃO CRUZEIRO'
+    ];
 
     const PASTEL = [
       {bg:'#E0F2FE', br:'#BAE6FD'},
@@ -1123,21 +1442,343 @@
       {bg:'#F1F5F9', br:'#E2E8F0'}
     ];
 
+    function normalizarNomeTransportadora(valor){
+      return (valor || '')
+        .toString()
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toLocaleUpperCase('pt-BR');
+    }
+
+    function ordenarTransportadoras(lista){
+      return [...lista].sort((a,b) =>
+        (a.nome || '').localeCompare((b.nome || ''), 'pt-BR', {sensitivity:'base'})
+      );
+    }
+
+    function transportadorasAtivas(){
+      return ordenarTransportadoras(transportadoras.filter(t => t.ativo !== false));
+    }
+
+    function mostrarMsgTransportadora(msg, cls='ok'){
+      transportadoraMsg.textContent = msg;
+      transportadoraMsg.className = 'transportMsg ' + cls;
+    }
+
+    function limparMsgTransportadora(){
+      transportadoraMsg.textContent = '';
+      transportadoraMsg.className = 'transportMsg';
+    }
+
+    function resetFormTransportadora(){
+      transportadoraEditandoId = null;
+      transportadoraNome.value = '';
+      tituloFormTransportadora.textContent = 'Nova transportadora';
+      btnSalvarTransportadora.textContent = 'Cadastrar';
+      btnCancelarEdicaoTransportadora.hidden = true;
+      limparMsgTransportadora();
+    }
+
+    async function semearTransportadorasSeNecessario(){
+      const ref = db.ref('transportadoras');
+      const seed = {};
+      const agora = Date.now();
+
+      DEFAULT_TRANSPORTADORAS.forEach(nome => {
+        const key = ref.push().key;
+        seed[key] = {
+          nome,
+          ativo:true,
+          criadoEm:agora,
+          atualizadoEm:agora,
+          criadoPor:auth.currentUser?.uid || null
+        };
+      });
+
+      await ref.transaction(atual => {
+        if(atual && Object.keys(atual).length) return;
+        return seed;
+      });
+    }
+
+    function pararListenerTransportadoras(){
+      if(transportadorasRef && transportadorasCallback){
+        transportadorasRef.off('value', transportadorasCallback);
+      }
+      transportadorasRef = null;
+      transportadorasCallback = null;
+    }
+
+    async function iniciarTransportadoras(){
+      if(!db || !auth.currentUser) return;
+
+      pararListenerTransportadoras();
+
+      try{
+        await semearTransportadorasSeNecessario();
+      }catch(err){
+        console.error('Erro ao criar transportadoras iniciais:', err);
+      }
+
+      transportadorasRef = db.ref('transportadoras');
+      transportadorasCallback = transportadorasRef.on('value', snap => {
+        const val = snap.val() || {};
+        transportadoras = Object.entries(val).map(([id,dados]) => ({
+          id,
+          nome:normalizarNomeTransportadora(dados?.nome || ''),
+          ativo:dados?.ativo !== false,
+          criadoEm:dados?.criadoEm || null,
+          atualizadoEm:dados?.atualizadoEm || null
+        })).filter(t => t.nome);
+
+        construirBotoes();
+        renderListaTransportadorasCadastro();
+      }, err => {
+        console.error('Erro ao carregar transportadoras:', err);
+        setTips('⚠️ Não foi possível carregar o cadastro de transportadoras. Atualize as regras do Firebase para permitir leitura e gravação em /transportadoras.');
+        transportadoras = DEFAULT_TRANSPORTADORAS.map((nome,idx) => ({
+          id:'fallback-' + idx,
+          nome,
+          ativo:true
+        }));
+        construirBotoes();
+        renderListaTransportadorasCadastro();
+      });
+    }
+
     function construirBotoes(){
       gridTransportadoras.innerHTML = '';
-      LISTA.forEach((nome, idx) => {
+      const ativas = transportadorasAtivas();
+
+      if(!ativas.length){
+        gridTransportadoras.innerHTML = '<div class="transportEmpty">Nenhuma transportadora ativa. Use <b>Cadastrar/editar</b> para criar ou reativar uma transportadora.</div>';
+        return;
+      }
+
+      ativas.forEach((item, idx) => {
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'chip';
-        b.textContent = nome;
-        b.setAttribute('data-nome', nome);
+        b.textContent = item.nome;
+        b.setAttribute('data-id', item.id);
+        b.setAttribute('data-nome', item.nome);
         const c = PASTEL[idx % PASTEL.length];
         b.style.background = c.bg;
         b.style.borderColor = c.br;
-        b.addEventListener('click', () => selecionarTransportadora(nome));
+        b.addEventListener('click', () => selecionarTransportadora(item));
         gridTransportadoras.appendChild(b);
       });
     }
+
+    function renderListaTransportadorasCadastro(){
+      if(!listaTransportadorasCadastro) return;
+
+      const termo = normalizarNomeTransportadora(buscaTransportadoraCadastro?.value || '');
+      const ordenadas = ordenarTransportadoras(transportadoras);
+      const filtradas = termo
+        ? ordenadas.filter(t => t.nome.includes(termo))
+        : ordenadas;
+
+      const ativas = transportadoras.filter(t => t.ativo !== false).length;
+      qtdTransportadorasCadastro.textContent = `${ativas} ativas de ${transportadoras.length}`;
+      listaTransportadorasCadastro.innerHTML = '';
+
+      if(!filtradas.length){
+        const vazio = document.createElement('div');
+        vazio.className = 'transportEmpty';
+        vazio.textContent = termo
+          ? 'Nenhuma transportadora encontrada para essa pesquisa.'
+          : 'Nenhuma transportadora cadastrada.';
+        listaTransportadorasCadastro.appendChild(vazio);
+        return;
+      }
+
+      filtradas.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'transportCadastroItem' + (item.ativo === false ? ' inativo' : '');
+
+        const info = document.createElement('div');
+        const nome = document.createElement('div');
+        nome.className = 'transportCadastroNome';
+        nome.textContent = item.nome;
+
+        const meta = document.createElement('div');
+        meta.className = 'transportCadastroMeta';
+        const status = document.createElement('span');
+        status.className = 'statusMini ' + (item.ativo === false ? 'inativo' : 'ativo');
+        status.textContent = item.ativo === false ? 'Inativa' : 'Ativa';
+        meta.appendChild(status);
+
+        info.appendChild(nome);
+        info.appendChild(meta);
+
+        const acoes = document.createElement('div');
+        acoes.className = 'transportCadastroAcoes';
+
+        const editar = document.createElement('button');
+        editar.type = 'button';
+        editar.className = 'miniAction edit';
+        editar.textContent = 'Editar';
+        editar.dataset.action = 'edit';
+        editar.dataset.id = item.id;
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'miniAction ' + (item.ativo === false ? 'toggleOn' : 'toggleOff');
+        toggle.textContent = item.ativo === false ? 'Ativar' : 'Desativar';
+        toggle.dataset.action = 'toggle';
+        toggle.dataset.id = item.id;
+
+        const excluir = document.createElement('button');
+        excluir.type = 'button';
+        excluir.className = 'miniAction delete';
+        excluir.textContent = 'Excluir';
+        excluir.dataset.action = 'delete';
+        excluir.dataset.id = item.id;
+
+        acoes.appendChild(editar);
+        acoes.appendChild(toggle);
+        acoes.appendChild(excluir);
+        row.appendChild(info);
+        row.appendChild(acoes);
+        listaTransportadorasCadastro.appendChild(row);
+      });
+    }
+
+    function abrirGerenciadorTransportadoras(){
+      if(!auth?.currentUser){
+        setTips('⚠️ Faça login para gerenciar transportadoras.');
+        return;
+      }
+      allowAutoFocus = false;
+      autoFocusArmed = false;
+      resetFormTransportadora();
+      renderListaTransportadorasCadastro();
+      modalTransportadoras.style.display = 'flex';
+      setTimeout(() => transportadoraNome.focus(), 80);
+    }
+
+    function fecharGerenciadorTransportadoras(restaurarFoco=true){
+      modalTransportadoras.style.display = 'none';
+      resetFormTransportadora();
+      if(restaurarFoco){
+        setTimeout(() => {
+          allowAutoFocus = true;
+          autoFocusArmed = true;
+          focusLeitor();
+        }, 80);
+      }
+    }
+
+    async function salvarTransportadoraCadastro(){
+      if(!db || !auth.currentUser){
+        mostrarMsgTransportadora('Usuário não autenticado.', 'err');
+        return;
+      }
+
+      const nome = normalizarNomeTransportadora(transportadoraNome.value);
+      if(nome.length < 2){
+        mostrarMsgTransportadora('Digite um nome válido para a transportadora.', 'warn');
+        transportadoraNome.focus();
+        return;
+      }
+
+      const duplicada = transportadoras.find(t =>
+        t.nome.localeCompare(nome, 'pt-BR', {sensitivity:'base'}) === 0 &&
+        t.id !== transportadoraEditandoId
+      );
+      if(duplicada){
+        mostrarMsgTransportadora('Essa transportadora já está cadastrada.', 'warn');
+        return;
+      }
+
+      btnSalvarTransportadora.disabled = true;
+      try{
+        const agora = firebase.database.ServerValue.TIMESTAMP;
+        if(transportadoraEditandoId){
+          await db.ref('transportadoras/' + transportadoraEditandoId).update({
+            nome,
+            atualizadoEm:agora,
+            atualizadoPor:auth.currentUser.uid
+          });
+          resetFormTransportadora();
+          mostrarMsgTransportadora('Transportadora atualizada com sucesso.', 'ok');
+        }else{
+          const ref = db.ref('transportadoras').push();
+          await ref.set({
+            nome,
+            ativo:true,
+            criadoEm:agora,
+            atualizadoEm:agora,
+            criadoPor:auth.currentUser.uid
+          });
+          transportadoraNome.value = '';
+          mostrarMsgTransportadora('Transportadora cadastrada com sucesso.', 'ok');
+        }
+        setTimeout(() => transportadoraNome.focus(), 50);
+      }catch(err){
+        mostrarMsgTransportadora('Erro ao salvar: ' + (err.message || String(err)), 'err');
+      }finally{
+        btnSalvarTransportadora.disabled = false;
+      }
+    }
+
+    function iniciarEdicaoTransportadora(id){
+      const item = transportadoras.find(t => t.id === id);
+      if(!item) return;
+      transportadoraEditandoId = id;
+      transportadoraNome.value = item.nome;
+      tituloFormTransportadora.textContent = 'Editar transportadora';
+      btnSalvarTransportadora.textContent = 'Salvar alteração';
+      btnCancelarEdicaoTransportadora.hidden = false;
+      limparMsgTransportadora();
+      transportadoraNome.focus();
+      transportadoraNome.select();
+    }
+
+    async function alternarTransportadora(id){
+      const item = transportadoras.find(t => t.id === id);
+      if(!item || id.startsWith('fallback-')) return;
+
+      const novoAtivo = item.ativo === false;
+      if(!novoAtivo && transportadorasAtivas().length <= 1){
+        mostrarMsgTransportadora('Mantenha pelo menos uma transportadora ativa.', 'warn');
+        return;
+      }
+
+      try{
+        await db.ref('transportadoras/' + id).update({
+          ativo:novoAtivo,
+          atualizadoEm:firebase.database.ServerValue.TIMESTAMP,
+          atualizadoPor:auth.currentUser?.uid || null
+        });
+        mostrarMsgTransportadora(novoAtivo ? 'Transportadora ativada.' : 'Transportadora desativada.', 'ok');
+      }catch(err){
+        mostrarMsgTransportadora('Erro ao alterar status: ' + (err.message || String(err)), 'err');
+      }
+    }
+
+    async function excluirTransportadoraCadastro(id){
+      const item = transportadoras.find(t => t.id === id);
+      if(!item || id.startsWith('fallback-')) return;
+
+      if(item.ativo !== false && transportadorasAtivas().length <= 1){
+        mostrarMsgTransportadora('Não é possível excluir a única transportadora ativa.', 'warn');
+        return;
+      }
+
+      const ok = confirm(`Excluir a transportadora "${item.nome}"?\n\nAs leituras antigas continuarão preservadas.`);
+      if(!ok) return;
+
+      try{
+        await db.ref('transportadoras/' + id).remove();
+        if(transportadoraEditandoId === id) resetFormTransportadora();
+        mostrarMsgTransportadora('Transportadora excluída.', 'ok');
+      }catch(err){
+        mostrarMsgTransportadora('Erro ao excluir: ' + (err.message || String(err)), 'err');
+      }
+    }
+
 
     function atualizarPendentesUI(){
       const n = pendentes.length;
@@ -1167,10 +1808,15 @@
       allowAutoFocus = true;
       focusLeitor();
       abrirPopup();
+      iniciarTransportadoras();
       listar();
     }
 
     function fecharSistema(){
+      pararListenerTransportadoras();
+      transportadoras = [];
+      construirBotoes();
+      fecharGerenciadorTransportadoras(false);
       mostrarLogin('Faça login para acessar o sistema.');
       setStatus('não autenticado', 'warn');
       registrosDiv.innerHTML = '';
@@ -1305,19 +1951,29 @@
       }, 10);
     }
 
-    async function salvarUmRegistro(seq, dataHora, nome){
+    async function salvarUmRegistro(seq, dataHora, nome, transportadoraId=null){
       const ref = db.ref('leituras').push();
-      await ref.set({
+      const registro = {
         seq,
         dataHora,
-        transportadora: nome,
-        uid: auth.currentUser?.uid || null,
-        ts: firebase.database.ServerValue.TIMESTAMP
-      });
+        transportadora:nome,
+        uid:auth.currentUser?.uid || null,
+        ts:firebase.database.ServerValue.TIMESTAMP
+      };
+      if(transportadoraId) registro.transportadoraId = transportadoraId;
+      await ref.set(registro);
       lastSavedKey = ref.key;
     }
 
-    async function selecionarTransportadora(nome){
+    async function selecionarTransportadora(transportadora){
+      const nome = typeof transportadora === 'string' ? transportadora : transportadora?.nome;
+      const transportadoraId = typeof transportadora === 'string' ? null : transportadora?.id;
+
+      if(!nome){
+        setTips('⚠️ Transportadora inválida.');
+        return;
+      }
+
       if(!db || !auth.currentUser){
         setTips('⚠️ Usuário não autenticado.');
         return;
@@ -1326,7 +1982,7 @@
       if(modoLote && pendentes.length){
         try{
           for(const p of pendentes){
-            await salvarUmRegistro(p.seq, p.dataHora, nome);
+            await salvarUmRegistro(p.seq, p.dataHora, nome, transportadoraId);
           }
           setStatus(`registradas ${pendentes.length} notas em ${nome}`, 'ok');
           pendentes.splice(0, pendentes.length);
@@ -1349,7 +2005,7 @@
       const seq = concatSpan.textContent.trim();
       const dataHora = timestampSpan.textContent.trim();
       try{
-        await salvarUmRegistro(seq, dataHora, nome);
+        await salvarUmRegistro(seq, dataHora, nome, transportadoraId);
         setStatus('conectado ✔', 'ok');
         resetForNext();
       }catch(e){
@@ -1569,7 +2225,8 @@
     }, true);
 
     document.addEventListener('focusin', (e) => {
-      if(modoLote && !appScreen.classList.contains('hidden') && e.target !== codigo){
+      const gerenciadorAberto = modalTransportadoras && modalTransportadoras.style.display === 'flex';
+      if(modoLote && !gerenciadorAberto && !appScreen.classList.contains('hidden') && e.target !== codigo){
         e.stopPropagation();
         setTimeout(() => {
           if(document.activeElement !== codigo){
@@ -1690,6 +2347,35 @@
       setTimeout(() => okMsg.style.display = 'none', 1400);
     });
 
+    btnGerenciarTransportadoras.addEventListener('click', abrirGerenciadorTransportadoras);
+    btnGerenciarTransportadorasInterno.addEventListener('click', abrirGerenciadorTransportadoras);
+    btnFecharTransportadoras.addEventListener('click', fecharGerenciadorTransportadoras);
+    btnSalvarTransportadora.addEventListener('click', salvarTransportadoraCadastro);
+    btnCancelarEdicaoTransportadora.addEventListener('click', resetFormTransportadora);
+
+    transportadoraNome.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        salvarTransportadoraCadastro();
+      }
+    });
+
+    buscaTransportadoraCadastro.addEventListener('input', renderListaTransportadorasCadastro);
+
+    listaTransportadorasCadastro.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action][data-id]');
+      if(!btn) return;
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+      if(action === 'edit') iniciarEdicaoTransportadora(id);
+      if(action === 'toggle') alternarTransportadora(id);
+      if(action === 'delete') excluirTransportadoraCadastro(id);
+    });
+
+    modalTransportadoras.addEventListener('click', (e) => {
+      if(e.target === modalTransportadoras) fecharGerenciadorTransportadoras();
+    });
+
     popupFechar.addEventListener('click', fecharPopup);
     popupInfo.addEventListener('click', (e) => {
       if(e.target === popupInfo) fecharPopup();
@@ -1704,7 +2390,7 @@
     });
 
     btnDevolucoes.addEventListener('click', () => {
-      window.location.href = 'https://testeculpani.github.io/devolucoes/';
+      setTips('↩️ Botão DEVOLUÇÕES criado. Falta configurar o link de destino.');
     });
 
     btnLogout.addEventListener('click', fazerLogout);
@@ -1719,6 +2405,8 @@
 
     window.addEventListener('load', async () => {
       atualizarResumo([]);
+      construirBotoes();
+      renderListaTransportadorasCadastro();
       await prepararAutenticacao();
     });
   </script>
